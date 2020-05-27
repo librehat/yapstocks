@@ -1,0 +1,17 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=YapStocks
+Comment=Yet Another Plasma Stocks Applet
+Type=Service
+Icon= #FIXME
+X-KDE-ParentApp=
+X-KDE-PluginInfo-Author=Symeon Huang
+X-KDE-PluginInfo-Category=Education
+X-KDE-PluginInfo-Email=symeon@librehat.com
+X-KDE-PluginInfo-License=GPL
+X-KDE-PluginInfo-Name=com.librehat.yapstocks
+X-KDE-PluginInfo-Version=1.0
+X-KDE-PluginInfo-Website=https://github.com/librehat/yapstocks
+X-KDE-ServiceTypes=Plasma/Applet
+X-Plasma-API=declarativeappletscript
+X-Plasma-MainScript=ui/main.qml

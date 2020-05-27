@@ -1,0 +1,10 @@
+node_modules
+dist/
+*.log
+*.code-workspace
+.vscode
+*.swp
+*~
+build/
+kesdict.kdev4
+.kdev4
