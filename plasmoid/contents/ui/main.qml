@@ -14,7 +14,7 @@ Item {
     readonly property var symbols: plasmoid.configuration.symbols
     readonly property int updateInterval: plasmoid.configuration.updateInterval
 
-    Plasmoid.icon: "labplot" // TODO: make an icon
+    Plasmoid.icon: Qt.resolvedUrl("./finance.svg")
 
     WorkerScript {
         id: worker
