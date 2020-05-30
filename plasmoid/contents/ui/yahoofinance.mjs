@@ -10,6 +10,7 @@ export function resolveChart(symbol) {
     .then((text) => {
         const resp = JSON.parse(text);
         if (resp.chart.error) {
+            console.log(`Error while resolving ${symbol}:`, JSON.stringify(resp.chart.error));
             throw new Error(resp.chart.error.description);
         }
         const meta = resp.chart.result[0].meta;
@@ -46,6 +47,7 @@ export function resolveQuote(symbol) {
     .then((text) => {
         const resp = JSON.parse(text);
         if (resp.quoteSummary.error) {
+            console.log(`Error while resolving ${symbol}:`, JSON.stringify(resp.quoteSummary.error));
             throw new Error(resp.quoteSummary.error.description);
         }
         const priceResult = resp.quoteSummary.result[0].price;
@@ -55,17 +57,17 @@ export function resolveQuote(symbol) {
             longName: priceResult.longName || priceResult.shortName,
             instrument: priceResult.quoteType,
             exchange: priceResult.exchange,
-            exchangeName: priceResult.exchangeName.raw,
-            currentPrice: priceResult.regularMarketPrice.raw,
-            dayHighPrice: priceResult.regularMarketDayHigh.raw,
-            dayLowPrice: priceResult.regularMarketDayLow.raw,
-            openPrice: priceResult.regularMarketOpen.raw,
-            volume: priceResult.regularMarketVolume.raw,
+            exchangeName: priceResult.exchangeName ? priceResult.exchangeName.raw : null,
+            currentPrice: priceResult.regularMarketPrice ? priceResult.regularMarketPrice.raw : null,
+            dayHighPrice: priceResult.regularMarketDayHigh ? priceResult.regularMarketDayHigh.raw : null,
+            dayLowPrice: priceResult.regularMarketDayHigh ? priceResult.regularMarketDayLow.raw : null,
+            openPrice: priceResult.regularMarketOpen ? priceResult.regularMarketOpen.raw : null,
+            volume: priceResult.regularMarketVolume ? priceResult.regularMarketVolume.raw : null,
             updatedDateTime: new Date(priceResult.regularMarketTime * 1000),
-            priceChange: priceResult.regularMarketChange.raw,
-            priceChangePercentage: priceResult.regularMarketChangePercent.raw * 100,
-            previousClose: priceResult.regularMarketPreviousClose.raw,
-            marketCap: priceResult.marketCap.raw,
+            priceChange: priceResult.regularMarketChange ? priceResult.regularMarketChange.raw : null,
+            priceChangePercentage: priceResult.regularMarketChangePercent ? priceResult.regularMarketChangePercent.raw * 100 : null,
+            previousClose: priceResult.regularMarketPreviousClose ? priceResult.regularMarketPreviousClose.raw : null,
+            marketCap: priceResult.marketCap ? priceResult.marketCap.raw : null,
         };
     });
 }

@@ -5,7 +5,7 @@ import QtQml.Models 2.12
 import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.components 2.0 as PlasmaComponents
 import org.kde.kirigami 2.4 as Kirigami
-
+import "yahoofinance.mjs" as YahooFinance
 
 ColumnLayout {
     id: root
@@ -20,6 +20,14 @@ ColumnLayout {
         Layout.margins: Kirigami.Units.smallSpacing
         type: Kirigami.MessageType.Error
         showCloseButton: true
+    }
+
+    Kirigami.InlineMessage {
+        id: infoMessage
+        Layout.fillWidth: true
+        Layout.margins: Kirigami.Units.smallSpacing
+        type: Kirigami.MessageType.Info
+        showCloseButton: false
     }
 
     Label {
@@ -43,27 +51,36 @@ ColumnLayout {
         PlasmaComponents.Button {
             iconSource: "list-add"
             onClicked: {
+                infoMessage.text = "Validating the symbol, please wait...";
+                infoMessage.visible = true;
                 const symbol = symbolTextField.text.trim();
-                if (!validateSymbol(symbol)) {
-                    return;
-                }
-                symbolsModel.append({symbol});
-                handleSymbolsUpdate();
-                symbolTextField.text = "";
+                validateSymbol(symbol).then((valid) => {
+                    if (valid) {
+                        symbolsModel.append({symbol});
+                        handleSymbolsUpdate();
+                        symbolTextField.text = "";
+                    }
+                    infoMessage.visible = false;
+                });
             }
         }
     }
 
     function validateSymbol(symbol) {
-        for (let i = 0; i < symbolsModel.count; ++i) {
-            if (symbol === symbolsModel.get(i).symbol) {
-                errorMessage.text = `Duplicate: ${symbol} already exists`
-                errorMessage.visible = true;
-                return false;
+        return YahooFinance.resolveQuote(symbol).then(() => {
+            for (let i = 0; i < symbolsModel.count; ++i) {
+                if (symbol === symbolsModel.get(i).symbol) {
+                    // This is a work around for Qt 5.12.x as the promise chain is buggy
+                    // Do a proper `throw new Error()` in next OpenSUSE Leap version
+                    return Promise.reject(`Duplicate: ${symbol} already exists`);
+                }
             }
-        }
-        // TODO: validate it with Yahoo Finance
-        return true;
+            return true;
+        }).catch((error) => {
+            errorMessage.text = error;
+            errorMessage.visible = true;
+            return false;
+        });
     }
 
     function handleSymbolsUpdate() {
@@ -78,6 +95,7 @@ ColumnLayout {
         Layout.fillWidth: true
         Layout.fillHeight: true
         ListView {
+            // TODO: support drag & drop to re-arrange the order
             id: symbolsField
             spacing: Kirigami.Units.smallSpacing
             model: ListModel {
