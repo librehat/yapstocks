@@ -31,7 +31,6 @@ Item {
         interval: updateInterval
         running: true
         repeat: true
-        // triggeredOnStart: true
         onTriggered: {
             if (symbolsModel.count > 0) {
                 loading = true;
@@ -76,6 +75,7 @@ Item {
                 PlasmaComponents.Label {
                     Layout.alignment: Qt.AlignRight
                     font.pointSize: 8
+                    visible: !!lastUpdated
                     text: "Last Updated: " + lastUpdated
                 }
             }
