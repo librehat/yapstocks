@@ -36,7 +36,7 @@ ColumnLayout {
         Layout.fillWidth: true
 
         Label {
-            text: exchangeName
+            text: longName
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignLeft
         }

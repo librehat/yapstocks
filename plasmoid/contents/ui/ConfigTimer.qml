@@ -14,7 +14,7 @@ Item {
 
         SpinBox {
             id: updateIntervalSpin
-            from: 30
+            from: 5
             to: 3600
             editable: true
             textFromValue: (value) => i18np("%1 minute", "%1 minutes", value)

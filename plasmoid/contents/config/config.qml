@@ -6,11 +6,11 @@ ConfigModel {
     ConfigCategory {
         name: i18n("Symbols")
         icon: "format-text-symbol"
-        source: "config/ConfigSymbols.qml"
+        source: "ConfigSymbols.qml"
     }
     ConfigCategory {
-        name: i18n("Miscellaneous")
-        icon: "configure"
-        source: "config/ConfigMisc.qml"
+        name: i18n("Timer")
+        icon: "ktimer"
+        source: "ConfigTimer.qml"
     }
 }

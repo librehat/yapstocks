@@ -11,7 +11,7 @@
     </entry>
     <entry name="updateInterval" type="Int">
         <label>The interval in milliseconds to update the data shown.</label>
-        <default>1800000</default>
+        <default>900000</default>
     </entry>
   </group>
 
