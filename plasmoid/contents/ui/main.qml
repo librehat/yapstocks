@@ -48,13 +48,22 @@ Item {
         anchors.fill: parent
 
         ListView {
+            id: view
+            spacing: PlasmaCore.Units.smallSpacing
+
             model:  ListModel {
                 id: symbolsModel
             }
             delegate: StockQuoteDelegate {
                 width: parent.width
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        view.currentIndex = index; // TODO: highlight item
+                        // TODO: overlay showing details
+                    }
+                }
             }
-            spacing: PlasmaCore.Units.smallSpacing
 
             header: PlasmaExtras.Title {
                 text: "Stocks"
