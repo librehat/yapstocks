@@ -40,8 +40,12 @@ Item {
     }
 
     onSymbolsChanged: {
-        loading = true;
-        worker.sendMessage({action: "modify", symbols: symbols, model: symbolsModel});
+        if (symbols && symbols.length > 0) {
+            loading = true;
+            worker.sendMessage({action: "modify", symbols: symbols, model: symbolsModel});
+        } else {
+            symbolsModel.clear();
+        }
     }
 
     ScrollView {
