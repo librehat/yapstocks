@@ -22,14 +22,6 @@ ColumnLayout {
         showCloseButton: true
     }
 
-    Kirigami.InlineMessage {
-        id: infoMessage
-        Layout.fillWidth: true
-        Layout.margins: Kirigami.Units.smallSpacing
-        type: Kirigami.MessageType.Info
-        showCloseButton: false
-    }
-
     Label {
         Layout.fillWidth: true
 
@@ -39,6 +31,7 @@ ColumnLayout {
     }
 
     RowLayout {
+        id: inputRow
         Layout.fillWidth: true
         spacing: Kirigami.Units.smallSpacing
 
@@ -50,9 +43,9 @@ ColumnLayout {
         }
         PlasmaComponents.Button {
             iconSource: "list-add"
+            enabled: symbolTextField.text.trim().length > 0
             onClicked: {
-                infoMessage.text = "Validating the symbol, please wait...";
-                infoMessage.visible = true;
+                inputRow.enabled = false;
                 const symbol = symbolTextField.text.trim();
                 validateSymbol(symbol).then((valid) => {
                     if (valid) {
@@ -60,7 +53,7 @@ ColumnLayout {
                         handleSymbolsUpdate();
                         symbolTextField.text = "";
                     }
-                    infoMessage.visible = false;
+                    inputRow.enabled = true;
                 });
             }
         }
