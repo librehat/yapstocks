@@ -66,18 +66,28 @@ Item {
         }
     }
 
-    ScrollView {
+    PlasmaComponents.PageStack {
+        id: stack
+        initialPage: mainView
         anchors.fill: parent
+    }
 
+    ScrollView {
+        id: mainView
         ListView {
             id: view
-            spacing: PlasmaCore.Units.smallSpacing
 
             model:  ListModel {
                 id: symbolsModel
             }
             delegate: StockQuoteDelegate {
                 width: parent.width
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        stack.push(detailsComponent, {symbol: symbol});
+                    }
+                }
             }
 
             header: PlasmaExtras.Title {
@@ -105,6 +115,19 @@ Item {
             }
             footerPositioning: ListView.OverlayFooter
         }
+    }
+
+    Component {
+        id: detailsComponent
+        PriceChart { }
+    }
+
+    PlasmaComponents.Button {
+        anchors.bottom: parent.bottom
+        anchors.right: parent.right
+        iconSource: "draw-arrow-back"
+        visible: stack.depth > 1
+        onClicked: stack.pop()
     }
 
     PlasmaComponents.BusyIndicator {
