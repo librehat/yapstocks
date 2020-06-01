@@ -13,7 +13,9 @@ export function resolveChart(symbol) {
             console.log(`Error while resolving ${symbol}:`, JSON.stringify(resp.chart.error));
             throw new Error(resp.chart.error.description);
         }
-        const meta = resp.chart.result[0].meta;
+        const result = resp.chart.result[0];
+        const meta = result.meta;
+        const quote = result.indicators.quote[0];
         return {
             symbol: meta.symbol,
             currency: meta.currency,
@@ -32,7 +34,14 @@ export function resolveChart(symbol) {
                     end: meta.currentTradingPeriod.regular.end,
                 },
             },
-            // TODO: add historical data points to the response
+            timeseries: result.timestamp.map((timestamp, idx) => ({
+                timestamp: timestamp * 1000,
+                open: quote.open[idx],
+                close: quote.close[idx],
+                high: quote.high[idx],
+                low: quote.low[idx],
+                volume: quote.volume[idx],
+            })),
         };
     });
 }

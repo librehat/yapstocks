@@ -60,13 +60,6 @@ Item {
             }
             delegate: StockQuoteDelegate {
                 width: parent.width
-                MouseArea {
-                    anchors.fill: parent
-                    onClicked: {
-                        view.currentIndex = index; // TODO: highlight item
-                        // TODO: overlay showing details
-                    }
-                }
             }
 
             header: PlasmaExtras.Title {

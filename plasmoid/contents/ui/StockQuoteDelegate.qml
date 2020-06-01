@@ -11,6 +11,9 @@ ColumnLayout {
         visible: index != 0
     }
 
+    function showPriceChart() {
+    }
+
     RowLayout {
         Layout.fillWidth: true
 
@@ -22,13 +25,13 @@ ColumnLayout {
         }
 
         Label {
-            text: currentPrice.toFixed(2)
+            text: `${currentPrice.toFixed(2)} ${currency}`
             Layout.alignment: Qt.AlignRight
-        }
 
-        Label {
-            text: currency
-            Layout.alignment: Qt.AlignRight
+            MouseArea {
+                anchors.fill: parent
+                onClicked: showPriceChart()
+            }
         }
     }
 
@@ -45,6 +48,11 @@ ColumnLayout {
             text: `${priceChange.toFixed(2)} (${priceChangePercentage.toFixed(2)}%)`
             color: priceChange == 0 ? PlasmaCore.ColorScope.neutralTextColor : (priceChange > 0 ? PlasmaCore.ColorScope.positiveTextColor : PlasmaCore.ColorScope.negativeTextColor)
             Layout.alignment: Qt.AlignRight
+
+            MouseArea {
+                anchors.fill: parent
+                onClicked: showPriceChart()
+            }
         }
     }
 }
