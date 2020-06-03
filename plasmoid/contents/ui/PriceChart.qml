@@ -21,76 +21,72 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 import QtCharts 2.2
 import org.kde.plasma.core 2.0 as PlasmaCore
+import org.kde.plasma.components 2.0 as PlasmaComponents
+import org.kde.kirigami 2.4 as Kirigami
 
 ColumnLayout {
     id: rootLayout
 
     property bool loading: false
+    property Item stack
     property string symbol
-
-    ButtonGroup { buttons: controlsRow.children }
 
     RowLayout {
         id: controlsRow
         Layout.fillWidth: true
         Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
 
-        Label {
-            text: "Period"
+        PlasmaComponents.Button {
+            Layout.fillWidth: true
+            iconSource: "draw-arrow-back"
+            text: "Return"
+            onClicked: stack.pop()
         }
 
-        RadioButton {
-            checked: true
-            text: "1D"
+        ComboBox {
+            id: periodCombo
+            model: ["1D", "5D", "1M", "6M", "YTD", "1Y", "5Y", "Max"]
+            onActivated: {
+                loading = true;
+                worker.sendMessage({action: "chart", symbol: symbol, period: periodCombo.currentText}); // TODO: i18n
+                switch (currentIndex) {
+                case 0:
+                    xAxis.format = "hh:mm";
+                    break;
+                case 1:
+                    xAxis.format = "ddd";
+                    break;
+                case 2:
+                case 3:
+                    xAxis.format = "d MMM";
+                    break;
+                case 4:
+                case 5:
+                case 6:
+                case 7:
+                    xAxis.format = "MMM, yy";
+                    break;
+                }
+            }
         }
-        /* TODO
-        RadioButton {
-            text: "5D"
-        }
-        RadioButton {
-            text: "1M"
-        }
-        RadioButton {
-            text: "3M"
-        }
-        RadioButton {
-            text: "6M"
-        }
-        RadioButton {
-            text: "1Y"
-        }
-        RadioButton {
-            text: "2Y"
-        }
-        RadioButton {
-            text: "5Y"
-        }
-        RadioButton {
-            text: "YTD"
-        }
-        RadioButton {
-            text: "Max"
-        }
-        */
     }
 
     ChartView {
         id: chart
         Layout.fillWidth: true
         Layout.fillHeight: true
-        visible: !loading
 
         localizeNumbers: true
         legend.visible: false
-        theme: ChartView.ChartThemeQt
+        theme: ChartView.ChartThemeDark
         backgroundColor: PlasmaCore.ColorScope.backgroundColor
+        animationOptions: ChartView.SeriesAnimations
+        antialiasing: true
 
         axes: [
             DateTimeAxis {
                 id: xAxis
-                format: "hh:mm" // TODO: this should be changed depends on the period
-                // min and max are needed here somehow otherwise the ticks don't show up
-                // even though they get overwritten by the code below
+                format: "hh:mm"
                 min: new Date(2020, 1, 1)
                 max: new Date()
                 tickCount: 6
@@ -109,7 +105,13 @@ ColumnLayout {
         ]
     }
 
-    BusyIndicator {
+    ToolTip {
+        id: tooltip
+        parent: chart
+        delay: -1
+    }
+
+    PlasmaComponents.BusyIndicator {
         Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
         visible: loading
         running: loading
@@ -123,11 +125,27 @@ ColumnLayout {
 
             if (messageObject.error) {
                 // TODO: handle error
+                return;
             }
 
             const series = chart.createSeries(ChartView.SeriesTypeCandlestick, symbol, xAxis, yAxis);
             series.increasingColor = PlasmaCore.ColorScope.positiveTextColor;
             series.decreasingColor = PlasmaCore.ColorScope.negativeTextColor;
+            series.bodyWidth = 1.0;
+            series.capsVisible = false;
+            series.bodyOutlineVisible = false;
+            series.hovered.connect((status, set) => {
+                if (status) {
+                    tooltip.show(
+`Open: ${set.open.toFixed(2)}
+Close: ${set.close.toFixed(2)}
+High: ${set.high.toFixed(2)}
+Low: ${set.low.toFixed(2)}
+Time: ${new Date(set.timestamp).toLocaleString()}`,
+                        Kirigami.Units.longDuration,
+                    );
+                }
+            });
             const result = messageObject.data;
             result.timeseries.forEach((data) => {
                 if (data.open === null || data.close === null || data.high === null || data.low === null) {
@@ -147,8 +165,8 @@ ColumnLayout {
             });
             xAxis.min = new Date(result.axes.minTime);
             xAxis.max = new Date(result.axes.maxTime);
-            yAxis.min = result.axes.minVal;
-            yAxis.max = result.axes.maxVal;
+            yAxis.min = result.axes.minVal * 0.997;
+            yAxis.max = result.axes.maxVal * 1.003;
         }
 
         Component.onCompleted: {
@@ -157,7 +175,7 @@ ColumnLayout {
                 return;
             }
             loading = true;
-            worker.sendMessage({action: "chart", symbol: symbol});
+            worker.sendMessage({action: "chart", symbol: symbol, period: "1D"});
         }
     }
 }

@@ -22,10 +22,12 @@ import { httpRequestP } from "httprequest.mjs";
 /**
  * Resolves a security symbol from Yahoo Finance and gets its price charts
  * @param {String} symbol
+ * @param {String} range
+ * @param {String} interval
  * @return {Promise}
  */
-export function resolveChart(symbol) {
-    return httpRequestP(`https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?symbol=${symbol}`)
+export function resolveChart(symbol, range, interval) {
+    return httpRequestP(`https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?symbol=${symbol}&range=${range}&interval=${interval}`)
     .then((text) => {
         const resp = JSON.parse(text);
         if (resp.chart.error) {
@@ -35,6 +37,7 @@ export function resolveChart(symbol) {
         const result = resp.chart.result[0];
         const meta = result.meta;
         const quote = result.indicators.quote[0];
+        console.debug("number of timeseries", result.timestamp.length);
         return {
             symbol: meta.symbol,
             currency: meta.currency,

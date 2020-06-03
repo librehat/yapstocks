@@ -20,6 +20,44 @@
 import { resolveChart, resolveQuote } from "yahoofinance.mjs"
 
 /**
+ * Provides a map to map from our UI "period" to Yahoo's range and interval
+ */
+const PeriodMap = Object.freeze({
+    "1D": {
+        range: "1d",
+        interval: "2m",
+    },
+    "5D": {
+        range: "5d",
+        interval: "15m",
+    },
+    "1M": {
+        range: "1mo",
+        interval: "1h",
+    },
+    "6M": {
+        range: "6mo",
+        interval: "1d",
+    },
+    "YTD": {
+        range: "ytd",
+        interval: "1d",
+    },
+    "1Y": {
+        range: "1y",
+        interval: "1d",
+    },
+    "5Y": {
+        range: "5y",
+        interval: "1wk",
+    },
+    "Max": {
+        range: "max",
+        interval: "1mo",
+    },
+});
+
+/**
  * The entry point of the worker thread
  *
  * The message schema is slightly different depending on the `action`.
@@ -30,6 +68,7 @@ import { resolveChart, resolveQuote } from "yahoofinance.mjs"
  * @param {String} msg.action "modify", "refresh", "chart"
  * @param {String[]} [msg.symbols] symbols for action "modify"
  * @param {String} [msg.symbol] single symbol for action "chart"
+ * @param {String} [msg.period] the period for action "chart"
  * @param {ListModel} msg.model
  */
 WorkerScript.onMessage = (msg) => {
@@ -60,7 +99,8 @@ WorkerScript.onMessage = (msg) => {
             });
         }
         if (msg.action === "chart") {
-            return resolveChart(msg.symbol).then((result) => {
+            return resolveChart(msg.symbol, PeriodMap[msg.period].range, PeriodMap[msg.period].interval)
+            .then((result) => {
                 let minVal = result.currentPrice, maxVal = result.currentPrice;
                 let minTime = result.updatedDateTime, maxTime = result.updatedDateTime;
                 result.timeseries.forEach((data) => {

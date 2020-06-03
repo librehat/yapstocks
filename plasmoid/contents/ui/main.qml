@@ -85,7 +85,7 @@ Item {
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        stack.push(detailsComponent, {symbol});
+                        stack.push(detailsComponent, {symbol, stack});
                     }
                 }
             }
@@ -122,15 +122,7 @@ Item {
         PriceChart { }
     }
 
-    PlasmaComponents.Button {
-        anchors.bottom: parent.bottom
-        anchors.right: parent.right
-        iconSource: "draw-arrow-back"
-        visible: stack.depth > 1
-        onClicked: stack.pop()
-    }
-
-    BusyIndicator {
+    PlasmaComponents.BusyIndicator {
         anchors.centerIn: parent
         visible: loading
         running: loading
