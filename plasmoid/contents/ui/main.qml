@@ -85,7 +85,7 @@ Item {
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        stack.push(detailsComponent, {symbol: symbol});
+                        stack.push(detailsComponent, {symbol});
                     }
                 }
             }
@@ -130,7 +130,7 @@ Item {
         onClicked: stack.pop()
     }
 
-    PlasmaComponents.BusyIndicator {
+    BusyIndicator {
         anchors.centerIn: parent
         visible: loading
         running: loading

@@ -21,11 +21,11 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 import QtCharts 2.2
 import org.kde.plasma.core 2.0 as PlasmaCore
-import "../code/yahoofinance.mjs" as YahooFinance
 
 ColumnLayout {
     id: rootLayout
 
+    property bool loading: false
     property string symbol
 
     ButtonGroup { buttons: controlsRow.children }
@@ -33,7 +33,7 @@ ColumnLayout {
     RowLayout {
         id: controlsRow
         Layout.fillWidth: true
-        Layout.alignment: Qt.AlignHCenter
+        Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
 
         Label {
             text: "Period"
@@ -78,6 +78,7 @@ ColumnLayout {
         id: chart
         Layout.fillWidth: true
         Layout.fillHeight: true
+        visible: !loading
 
         localizeNumbers: true
         legend.visible: false
@@ -108,18 +109,26 @@ ColumnLayout {
         ]
     }
 
-    onSymbolChanged: {
-        console.debug("PriceChart symbol changed", symbol);
-        chart.removeAllSeries();
-        if (!symbol || symbol.length === 0) {
-            return;
-        }
-        const series = chart.createSeries(ChartView.SeriesTypeCandlestick, symbol, xAxis, yAxis);
-        series.increasingColor = PlasmaCore.ColorScope.positiveTextColor;
-        series.decreasingColor = PlasmaCore.ColorScope.negativeTextColor;
-        YahooFinance.resolveChart(symbol).then((result) => {
-            let minVal = result.currentPrice, maxVal = result.currentPrice;
-            let minTime = result.updatedDateTime, maxTime = result.updatedDateTime;
+    BusyIndicator {
+        Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+        visible: loading
+        running: loading
+    }
+
+    WorkerScript {
+        id: worker
+        source: "../code/dataloader.mjs"
+        onMessage: {
+            loading = false;
+
+            if (messageObject.error) {
+                // TODO: handle error
+            }
+
+            const series = chart.createSeries(ChartView.SeriesTypeCandlestick, symbol, xAxis, yAxis);
+            series.increasingColor = PlasmaCore.ColorScope.positiveTextColor;
+            series.decreasingColor = PlasmaCore.ColorScope.negativeTextColor;
+            const result = messageObject.data;
             result.timeseries.forEach((data) => {
                 if (data.open === null || data.close === null || data.high === null || data.low === null) {
                     // Skip null data points
@@ -135,17 +144,20 @@ ColumnLayout {
                     high: ${data.high}
                     low: ${data.low}
                 }`, series, "dynamicCandleSet"));
-                minVal = Math.min(minVal, data.low);
-                maxVal = Math.max(maxVal, data.high);
-                minTime = Math.min(minTime, data.timestamp);
-                maxTime = Math.max(maxTime, data.timestamp);
             });
-            xAxis.min = new Date(minTime);
-            xAxis.max = new Date(maxTime);
-            yAxis.min = minVal * 0.999; // "margins"
-            yAxis.max = maxVal * 1.001;
-        }).catch((error) => {
-            // TODO: show the error message
-        });
+            xAxis.min = new Date(result.axes.minTime);
+            xAxis.max = new Date(result.axes.maxTime);
+            yAxis.min = result.axes.minVal;
+            yAxis.max = result.axes.maxVal;
+        }
+
+        Component.onCompleted: {
+            chart.removeAllSeries();
+            if (!symbol || symbol.length === 0) {
+                return;
+            }
+            loading = true;
+            worker.sendMessage({action: "chart", symbol: symbol});
+        }
     }
 }
