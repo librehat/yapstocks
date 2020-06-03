@@ -24,7 +24,7 @@ import QtQml.Models 2.12
 import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.components 2.0 as PlasmaComponents
 import org.kde.kirigami 2.4 as Kirigami
-import "yahoofinance.mjs" as YahooFinance
+import "../code/yahoofinance.mjs" as YahooFinance
 
 ColumnLayout {
     id: root

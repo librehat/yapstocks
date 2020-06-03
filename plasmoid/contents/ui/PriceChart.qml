@@ -21,7 +21,7 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 import QtCharts 2.2
 import org.kde.plasma.core 2.0 as PlasmaCore
-import "yahoofinance.mjs" as YahooFinance
+import "../code/yahoofinance.mjs" as YahooFinance
 
 ColumnLayout {
     id: rootLayout

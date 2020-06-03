@@ -36,7 +36,7 @@ Item {
 
     WorkerScript {
         id: worker
-        source: "dataloader.mjs"
+        source: "../code/dataloader.mjs"
         onMessage: {
             loading = false;
             lastUpdated = (new Date()).toLocaleString();
