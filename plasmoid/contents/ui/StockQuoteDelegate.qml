@@ -70,15 +70,19 @@ Volume: ${volume}`
         Layout.fillWidth: true
 
         Label {
-            text: longName
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignLeft
+
+            text: shortName
+            elide: Text.ElideMiddle
         }
 
         Text {
+            Layout.alignment: Qt.AlignRight
+
             text: `${priceChange.toFixed(2)} (${priceChangePercentage.toFixed(2)}%)`
             color: priceChange == 0 ? PlasmaCore.ColorScope.neutralTextColor : (priceChange > 0 ? PlasmaCore.ColorScope.positiveTextColor : PlasmaCore.ColorScope.negativeTextColor)
-            Layout.alignment: Qt.AlignRight
+            clip: true
 
             MouseArea {
                 id: priceChangeMouseArea

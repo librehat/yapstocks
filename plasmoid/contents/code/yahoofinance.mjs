@@ -85,6 +85,7 @@ export function resolveQuote(symbol) {
         return {
             symbol: priceResult.symbol,
             currency: priceResult.currency,
+            shortName: priceResult.shortName,
             longName: priceResult.longName || priceResult.shortName,
             instrument: priceResult.quoteType,
             exchange: priceResult.exchange,
