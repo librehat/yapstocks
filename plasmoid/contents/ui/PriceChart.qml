@@ -36,8 +36,13 @@ ColumnLayout {
         Layout.fillWidth: true
         Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
 
-        PlasmaComponents.Button {
+        PlasmaComponents.Label {
             Layout.fillWidth: true
+            font.weight: Font.Black
+            text: symbol
+        }
+
+        PlasmaComponents.Button {
             iconSource: "draw-arrow-back"
             text: "Return"
             onClicked: stack.pop()
@@ -136,7 +141,7 @@ ColumnLayout {
             series.bodyOutlineVisible = false;
             series.hovered.connect((status, set) => {
                 if (status) {
-                    tooltip.show(
+                    tooltip.show( // TODO: number format
 `Open: ${set.open.toFixed(2)}
 Close: ${set.close.toFixed(2)}
 High: ${set.high.toFixed(2)}
