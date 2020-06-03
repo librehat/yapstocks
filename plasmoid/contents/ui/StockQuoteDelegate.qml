@@ -42,6 +42,20 @@ ColumnLayout {
             font.weight: Font.Black
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignLeft
+
+            MouseArea {
+                id: symbolMouseArea
+                anchors.fill: parent
+                hoverEnabled: true
+            }
+
+            ToolTip {
+                text: `Long Name: ${longName}
+Type: ${instrument}
+Exchange: ${exchange}
+Market Cap: ${marketCap}`
+                visible: symbolMouseArea.containsMouse || nameMouseArea.containsMouse
+            }
         }
 
         Label {
@@ -75,6 +89,12 @@ Volume: ${volume}`
 
             text: shortName
             elide: Text.ElideMiddle
+
+            MouseArea {
+                id: nameMouseArea
+                anchors.fill: parent
+                hoverEnabled: true
+            }
         }
 
         Text {
