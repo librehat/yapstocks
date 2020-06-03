@@ -82,11 +82,8 @@ Item {
             }
             delegate: StockQuoteDelegate {
                 width: parent.width
-                MouseArea {
-                    anchors.fill: parent
-                    onClicked: {
-                        stack.push(detailsComponent, {symbol, stack});
-                    }
+                onPricesClicked: {
+                    stack.push(chartComponent, {symbol, stack});
                 }
             }
 
@@ -118,7 +115,7 @@ Item {
     }
 
     Component {
-        id: detailsComponent
+        id: chartComponent
         PriceChart { }
     }
 

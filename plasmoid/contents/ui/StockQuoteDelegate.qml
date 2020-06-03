@@ -21,9 +21,13 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 import org.kde.plasma.core 2.0 as PlasmaCore
+import org.kde.kirigami 2.4 as Kirigami
 
 ColumnLayout {
     spacing: -1
+
+    signal pricesClicked()
+    signal namesClicked()
 
     MenuSeparator {
         Layout.fillWidth: true
@@ -43,6 +47,22 @@ ColumnLayout {
         Label {
             text: `${currentPrice.toFixed(2)} ${currency}`
             Layout.alignment: Qt.AlignRight
+
+            MouseArea {
+                id: currentPriceMouseArea
+                anchors.fill: parent
+                hoverEnabled: true
+                onClicked: pricesClicked()
+            }
+
+            ToolTip {
+                text: `Open: ${openPrice.toFixed(2)}
+Previous Close: ${previousClose.toFixed(2)}
+High: ${dayHighPrice.toFixed(2)}
+Low: ${dayLowPrice.toFixed(2)}
+Volume: ${volume}`
+                visible: currentPriceMouseArea.containsMouse || priceChangeMouseArea.containsMouse
+            }
         }
     }
 
@@ -59,6 +79,13 @@ ColumnLayout {
             text: `${priceChange.toFixed(2)} (${priceChangePercentage.toFixed(2)}%)`
             color: priceChange == 0 ? PlasmaCore.ColorScope.neutralTextColor : (priceChange > 0 ? PlasmaCore.ColorScope.positiveTextColor : PlasmaCore.ColorScope.negativeTextColor)
             Layout.alignment: Qt.AlignRight
+
+            MouseArea {
+                id: priceChangeMouseArea
+                anchors.fill: parent
+                hoverEnabled: true
+                onClicked: pricesClicked()
+            }
         }
     }
 }
