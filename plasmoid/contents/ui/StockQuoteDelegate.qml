@@ -25,20 +25,26 @@ import org.kde.plasma.components 3.0 as PlasmaComponents
 import org.kde.kirigami 2.4 as Kirigami
 
 
-ColumnLayout { // TODO: Use GridLayout
+Item {
     signal pricesClicked()
     signal namesClicked()
 
+    height: contentRow.implicitHeight + separator.implicitHeight
+
     MenuSeparator {
-        Layout.fillWidth: true
+        id: separator
+        anchors.top: parent.top
+        width: parent.width
         visible: index !== 0
     }
 
-    RowLayout {
-        Layout.fillWidth: true
-        Layout.fillHeight: true
+    RowLayout { // TODO: Use GridLayout
+        id: contentRow
+        anchors.top: separator.bottom
+        width: parent.width
 
         ColumnLayout {
+            id: infoColumn
             Layout.fillWidth: true
             spacing: -1
 
@@ -56,18 +62,10 @@ ColumnLayout { // TODO: Use GridLayout
                 text: shortName
                 elide: Text.ElideMiddle
             }
-
-            PlasmaCore.ToolTipArea {
-                anchors.fill: parent
-                mainText: symbol
-                subText: `Long Name: ${longName}
-Type: ${instrument}
-Exchange: ${exchange}
-Market Cap: ${marketCap}`
-            }
         }
 
         ColumnLayout {
+            id: priceColumn
             Layout.alignment: Qt.AlignRight
             spacing: -1
 
@@ -83,21 +81,25 @@ Market Cap: ${marketCap}`
                 color: priceChange == 0 ? PlasmaCore.ColorScope.neutralTextColor : (priceChange > 0 ? PlasmaCore.ColorScope.positiveTextColor : PlasmaCore.ColorScope.negativeTextColor)
                 clip: true
             }
-
-            PlasmaCore.ToolTipArea {
-                anchors.fill: parent
-                mainText: symbol
-                subText: `Open: ${openPrice.toFixed(2)}
-Previous Close: ${previousClose.toFixed(2)}
-High: ${dayHighPrice.toFixed(2)}
-Low: ${dayLowPrice.toFixed(2)}
-Volume: ${volume}`
-            }
         }
 
         PlasmaComponents.Button {
             icon.name: "office-chart-line"
             onClicked: pricesClicked()
         }
+    }
+
+    PlasmaCore.ToolTipArea {
+        anchors.fill: contentRow
+        mainText: `${shortName} (${symbol})`
+        subText: `Long Name: ${longName}
+Type: ${instrument}
+Exchange: ${exchange}
+Market Cap: ${marketCap}
+Open: ${openPrice.toFixed(2)}
+Previous Close: ${previousClose.toFixed(2)}
+High: ${dayHighPrice.toFixed(2)}
+Low: ${dayLowPrice.toFixed(2)}
+Volume: ${volume}`
     }
 }
