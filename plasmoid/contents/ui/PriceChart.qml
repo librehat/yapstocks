@@ -21,7 +21,7 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 import QtCharts 2.2
 import org.kde.plasma.core 2.0 as PlasmaCore
-import org.kde.plasma.components 2.0 as PlasmaComponents
+import org.kde.plasma.components 3.0 as PlasmaComponents
 import org.kde.kirigami 2.4 as Kirigami
 
 ColumnLayout {
@@ -43,12 +43,12 @@ ColumnLayout {
         }
 
         PlasmaComponents.Button {
-            iconSource: "draw-arrow-back"
+            icon.name: "draw-arrow-back"
             text: "Return"
             onClicked: stack.pop()
         }
 
-        ComboBox {
+        PlasmaComponents.ComboBox {
             id: periodCombo
             model: ["1D", "5D", "1M", "6M", "YTD", "1Y", "5Y", "Max"]
             onActivated: {
