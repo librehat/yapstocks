@@ -24,17 +24,15 @@ import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 3.0 as PlasmaComponents
 import org.kde.kirigami 2.4 as Kirigami
 
-ColumnLayout {
-    id: rootLayout
-
+Item {
     property bool loading: false
     property Item stack
     property string symbol
 
     RowLayout {
         id: controlsRow
-        Layout.fillWidth: true
-        Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
+        width: parent.width
+        anchors.top: parent.top
 
         PlasmaComponents.Label {
             Layout.fillWidth: true
@@ -78,8 +76,9 @@ ColumnLayout {
 
     ChartView {
         id: chart
-        Layout.fillWidth: true
-        Layout.fillHeight: true
+        width: parent.width
+        anchors.top: controlsRow.bottom
+        anchors.bottom: parent.bottom
 
         localizeNumbers: true
         legend.visible: false
@@ -110,16 +109,17 @@ ColumnLayout {
         ]
     }
 
-    ToolTip {
+    PlasmaComponents.BusyIndicator {
+        anchors.right: chart.right
+        anchors.top: chart.top
+        visible: loading
+        running: loading
+    }
+
+    ToolTip { // TODO: try to use PlasmaComponents to make it visually consistent
         id: tooltip
         parent: chart
         delay: -1
-    }
-
-    PlasmaComponents.BusyIndicator {
-        Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
-        visible: loading
-        running: loading
     }
 
     WorkerScript {
