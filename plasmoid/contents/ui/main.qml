@@ -31,7 +31,7 @@ Item {
     property bool loading: false
     property string lastUpdated
 
-    readonly property var symbols: ["B"]// plasmoid.configuration.symbols
+    readonly property var symbols: plasmoid.configuration.symbols
     readonly property int updateInterval: plasmoid.configuration.updateInterval
 
     Plasmoid.icon: Qt.resolvedUrl("./finance.svg")

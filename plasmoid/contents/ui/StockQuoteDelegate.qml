@@ -86,11 +86,13 @@ Item {
         PlasmaComponents.Button {
             icon.name: "office-chart-line"
             onClicked: pricesClicked()
+            visible: tooltip.containsMouse
         }
     }
 
     PlasmaCore.ToolTipArea {
-        anchors.fill: contentRow
+        id: tooltip
+        anchors.fill: parent
         mainText: `${shortName} (${symbol})`
         subText: `Long Name: ${longName}
 Type: ${instrument}
