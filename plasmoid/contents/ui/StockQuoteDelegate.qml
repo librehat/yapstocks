@@ -84,11 +84,6 @@ Market Cap: ${marketCap}`
                 clip: true
             }
 
-            MouseArea {
-                anchors.fill: parent
-                onClicked: pricesClicked()
-            }
-
             PlasmaCore.ToolTipArea {
                 anchors.fill: parent
                 mainText: symbol
@@ -98,6 +93,11 @@ High: ${dayHighPrice.toFixed(2)}
 Low: ${dayLowPrice.toFixed(2)}
 Volume: ${volume}`
             }
+        }
+
+        PlasmaComponents.Button {
+            icon.name: "office-chart-line"
+            onClicked: pricesClicked()
         }
     }
 }
