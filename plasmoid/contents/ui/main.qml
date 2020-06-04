@@ -26,13 +26,24 @@ import org.kde.plasma.components 3.0 as PlasmaComponents
 import org.kde.plasma.extras 2.0 as PlasmaExtras
 
 Item {
+    id: root
+
     property bool loading: false
     property string lastUpdated
 
-    readonly property var symbols: plasmoid.configuration.symbols
+    readonly property var symbols: ["B"]// plasmoid.configuration.symbols
     readonly property int updateInterval: plasmoid.configuration.updateInterval
 
     Plasmoid.icon: Qt.resolvedUrl("./finance.svg")
+
+    function refresh() {
+        if (symbols && symbols.length > 0) {
+            loading = true;
+            worker.sendMessage({action: "modify", symbols: symbols, model: symbolsModel});
+        } else {
+            symbolsModel.clear();
+        }
+    }
 
     WorkerScript {
         id: worker
@@ -41,6 +52,13 @@ Item {
             loading = false;
             lastUpdated = (new Date()).toLocaleString();
             timer.restart();
+        }
+
+        Component.onCompleted: {
+            // refresh on start up for the initial load
+            root.refresh();
+            // connecting signals here to avoid sending messages to the worker before it's ready
+            root.symbolsChanged.connect(root.refresh);
         }
     }
 
@@ -54,15 +72,6 @@ Item {
                 loading = true;
                 worker.sendMessage({action: "refresh", model: symbolsModel});
             }
-        }
-    }
-
-    onSymbolsChanged: {
-        if (symbols && symbols.length > 0) {
-            loading = true;
-            worker.sendMessage({action: "modify", symbols: symbols, model: symbolsModel});
-        } else {
-            symbolsModel.clear();
         }
     }
 
