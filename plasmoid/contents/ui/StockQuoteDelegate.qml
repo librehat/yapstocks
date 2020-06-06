@@ -70,7 +70,7 @@ PlasmaComponents.ListItem {
                 Layout.fillWidth: true
                 Layout.alignment: Qt.AlignLeft
 
-                text: shortName
+                text: longName
                 elide: Text.ElideMiddle
             }
         }
