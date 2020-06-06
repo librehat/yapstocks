@@ -20,6 +20,15 @@
 import { httpRequestP } from "httprequest.mjs";
 
 /**
+ * A wrapper to get the 'raw' value from Yahoo Finance's response
+ * @param {Object|null} val
+ * @return {Number|null}
+ */
+function getRawVal(val) {
+    return val ? val.raw : null;
+}
+
+/**
  * Resolves a security symbol from Yahoo Finance and gets its price charts
  * @param {String} symbol
  * @param {String} range
@@ -100,6 +109,75 @@ export function resolveQuote(symbol) {
             priceChangePercentage: priceResult.regularMarketChangePercent ? priceResult.regularMarketChangePercent.raw * 100 : null,
             previousClose: priceResult.regularMarketPreviousClose ? priceResult.regularMarketPreviousClose.raw : null,
             marketCap: priceResult.marketCap ? priceResult.marketCap.raw : null,
+        };
+    });
+}
+
+/**
+ * Resolves a security symbol from Yahoo Finance and gets its profile
+ * @param {String} symbol
+ * @return {Promise}
+ *
+ * Returned object in the promise has a structure like:
+ * {
+ *   "summaryProfile": {Object|null},
+ *   "summaryDetail": {Object|null},
+ *   "components": {String[]|null},
+ * }
+ * `null` is used to indicate that such information is not available for the symbol.
+ */
+export function resolveProfile(symbol) {
+    const isIndex = symbol.startsWith("^");
+    const modules = isIndex ? "summaryDetail%2Ccomponents" : "summaryProfile%2CsummaryDetail";
+    return httpRequestP(`https://query1.finance.yahoo.com/v10/finance/quoteSummary/${symbol}?modules=${modules}`)
+    .then((text) => {
+        const resp = JSON.parse(text);
+        if (resp.quoteSummary.error) {
+            console.log(`Error while resolving ${symbol}:`, JSON.stringify(resp.quoteSummary.error));
+            throw new Error(resp.quoteSummary.error.description);
+        }
+        const result = resp.quoteSummary.result[0];
+
+        const detailResult = result.summaryDetail;
+        const summaryDetail = {
+            currency: detailResult.currency,
+            priceHistory: {
+                beta: getRawVal(detailResult.beta),
+                fiftyTwoWeekLow: getRawVal(detailResult.fiftyTwoWeekLow),
+                fiftyTwoWeekHigh: getRawVal(detailResult.fiftyTwoWeekHigh),
+                fiftyDayAverage: getRawVal(detailResult.fiftyDayAverage),
+                twoHundredDayAverage: getRawVal(detailResult.twoHundredDayAverage),
+            },
+            dividend: {
+                rate: getRawVal(detailResult.dividendRate),
+                yield: getRawVal(detailResult.dividendYield),
+                exDate: detailResult.exDividendDate ? detailResult.exDividendDate.fmt : null,
+                trailingAnnualRate: getRawVal(detailResult.trailingAnnualDividendRate),
+                trailingAnnualYield: getRawVal(detailResult.trailingAnnualDividendYield),
+            },
+        };
+
+        let summaryProfile = null, components = null;
+        if (isIndex) { // components for index only
+            components = result.components.components; // this could be null (e.g. ^SPX)
+        } else { // summaryProfile for non-index only
+            const profileResult = result.summaryProfile;
+            const address2 = profileResult.address2 ? profileResult.address2 + ", " : "";
+            summaryProfile = {
+                address: `${profileResult.address1}, ${address2}${profileResult.city} ${profileResult.zip}, ${profileResult.country}`,
+                phone: profileResult.phone,
+                website: profileResult.website,
+                industry: profileResult.industry,
+                sector: profileResult.sector,
+                description: profileResult.longBusinessSummary,
+                fullTimeEmployees: profileResult.fullTimeEmployees,
+            };
+        }
+
+        return {
+            summaryProfile,
+            summaryDetail,
+            components,
         };
     });
 }

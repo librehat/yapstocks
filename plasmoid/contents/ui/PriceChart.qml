@@ -113,8 +113,7 @@ Item {
     }
 
     PlasmaComponents.BusyIndicator {
-        anchors.right: chart.right
-        anchors.top: chart.top
+        anchors.centerIn: parent
         visible: loading
         running: loading
     }

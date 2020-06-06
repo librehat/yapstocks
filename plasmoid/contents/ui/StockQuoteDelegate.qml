@@ -94,12 +94,12 @@ PlasmaComponents.ListItem {
             }
         }
 
-        /* TODO PlasmaComponents3.ToolButton {
+        PlasmaComponents3.ToolButton {
             icon.name: "documentinfo"
             visible: tooltip.containsMouse
             flat: false
             onClicked: namesClicked()
-        }*/
+        }
 
         PlasmaComponents3.ToolButton {
             icon.name: "office-chart-line"
