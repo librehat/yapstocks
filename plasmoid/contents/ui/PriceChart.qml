@@ -51,25 +51,29 @@ Item {
             onActivated: {
                 loading = true;
                 worker.sendMessage({action: "chart", symbol: symbol, period: periodCombo.currentText}); // TODO: i18n
-                switch (currentIndex) {
-                case 0:
-                    xAxis.format = "hh:mm";
-                    break;
-                case 1:
-                    xAxis.format = "ddd";
-                    break;
-                case 2:
-                case 3:
-                    xAxis.format = "d MMM";
-                    break;
-                case 4:
-                case 5:
-                case 6:
-                case 7:
-                    xAxis.format = "MMM, yy";
-                    break;
-                }
+                updateAxes();
             }
+        }
+    }
+
+    function updateAxes() {
+        switch (periodCombo.currentIndex) {
+        case 0:
+            xAxis.format = "hh:mm";
+            break;
+        case 1:
+            xAxis.format = "ddd";
+            break;
+        case 2:
+        case 3:
+            xAxis.format = "d MMM";
+            break;
+        case 4:
+        case 5:
+        case 6:
+        case 7:
+            xAxis.format = "MMM, yy";
+            break;
         }
     }
 
@@ -180,7 +184,13 @@ Time: ${new Date(set.timestamp).toLocaleString()}`
                 return;
             }
             loading = true;
-            worker.sendMessage({action: "chart", symbol: symbol, period: "1D"});
+            worker.sendMessage({
+                action: "chart",
+                symbol: symbol,
+                period: plasmoid.configuration.defaultPeriod,
+            });
+            periodCombo.currentIndex = periodCombo.find(plasmoid.configuration.defaultPeriod);
+            updateAxes();
         }
     }
 }
