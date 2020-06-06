@@ -22,10 +22,14 @@ import { httpRequestP } from "httprequest.mjs";
 /**
  * A wrapper to get the 'raw' value from Yahoo Finance's response
  * @param {Object|null} val
+ * @param {Number|null} decimals
  * @return {Number|null}
  */
-function getRawVal(val) {
-    return val ? val.raw : null;
+function getRawValText(val, decimals) {
+    const result = val ? val.raw : null;
+    if (decimals !== null && result !== null) {
+        return result.toFixed(decimals);
+    }
 }
 
 /**
@@ -55,7 +59,7 @@ export function resolveChart(symbol, range, interval) {
             currentPrice: meta.regularMarketPrice,
             previousClose: meta.previousClose,
             priceChange: meta.regularMarketPrice - meta.previousClose,
-            priceChangePercentage: (meta.regularMarketPrice - meta.previousClose) / meta.previousClose * 100,
+            priceChangePercentage: ((meta.regularMarketPrice - meta.previousClose) / meta.previousClose * 100).toFixed(2),
             updatedDateTime: new Date(meta.regularMarketTime * 1000),
             exchange: {
                 timezone: meta.timezone,
@@ -91,6 +95,8 @@ export function resolveQuote(symbol) {
             throw new Error(resp.quoteSummary.error.description);
         }
         const priceResult = resp.quoteSummary.result[0].price;
+        // we do our own `toFixed()` instead of using `fmt` because the number locale can be different (',' or '.' for the thousands)
+        const decimals = priceResult.priceHint ? priceResult.priceHint.raw : 2;
         return {
             symbol: priceResult.symbol,
             currency: priceResult.currency,
@@ -98,16 +104,17 @@ export function resolveQuote(symbol) {
             longName: priceResult.longName || priceResult.shortName,
             instrument: priceResult.quoteType,
             exchange: priceResult.exchange,
-            exchangeName: priceResult.exchangeName ? priceResult.exchangeName.raw : null,
-            currentPrice: priceResult.regularMarketPrice ? priceResult.regularMarketPrice.raw : null,
-            dayHighPrice: priceResult.regularMarketDayHigh ? priceResult.regularMarketDayHigh.raw : null,
-            dayLowPrice: priceResult.regularMarketDayHigh ? priceResult.regularMarketDayLow.raw : null,
-            openPrice: priceResult.regularMarketOpen ? priceResult.regularMarketOpen.raw : null,
+            exchangeName: priceResult.exchangeName ? priceResult.exchangeName : null,
+            currentPrice: priceResult.regularMarketPrice ? priceResult.regularMarketPrice.raw.toFixed(decimals) : null,
+            dayHighPrice: priceResult.regularMarketDayHigh ? priceResult.regularMarketDayHigh.raw.toFixed(decimals) : null,
+            dayLowPrice: priceResult.regularMarketDayHigh ? priceResult.regularMarketDayLow.raw.toFixed(decimals) : null,
+            openPrice: priceResult.regularMarketOpen ? priceResult.regularMarketOpen.raw.toFixed(decimals) : null,
             volume: priceResult.regularMarketVolume ? priceResult.regularMarketVolume.raw : null,
             updatedDateTime: new Date(priceResult.regularMarketTime * 1000),
-            priceChange: priceResult.regularMarketChange ? priceResult.regularMarketChange.raw : null,
-            priceChangePercentage: priceResult.regularMarketChangePercent ? priceResult.regularMarketChangePercent.raw * 100 : null,
-            previousClose: priceResult.regularMarketPreviousClose ? priceResult.regularMarketPreviousClose.raw : null,
+            priceChange: priceResult.regularMarketChange ? priceResult.regularMarketChange.raw.toFixed(decimals) : null,
+            priceChangePercentage: priceResult.regularMarketChangePercent ? (priceResult.regularMarketChangePercent.raw * 100).toFixed(2) : null,
+            priceDecimals: decimals,
+            previousClose: priceResult.regularMarketPreviousClose ? priceResult.regularMarketPreviousClose.raw.toFixed(decimals) : null,
             marketCap: priceResult.marketCap ? priceResult.marketCap.raw : null,
         };
     });
@@ -139,21 +146,22 @@ export function resolveProfile(symbol) {
         const result = resp.quoteSummary.result[0];
 
         const detailResult = result.summaryDetail;
+        const decimals = detailResult.priceHint ? detailResult.priceHint.raw : 2;
         const summaryDetail = {
             currency: detailResult.currency,
             priceHistory: {
-                beta: getRawVal(detailResult.beta),
-                fiftyTwoWeekLow: getRawVal(detailResult.fiftyTwoWeekLow),
-                fiftyTwoWeekHigh: getRawVal(detailResult.fiftyTwoWeekHigh),
-                fiftyDayAverage: getRawVal(detailResult.fiftyDayAverage),
-                twoHundredDayAverage: getRawVal(detailResult.twoHundredDayAverage),
+                beta: getRawValText(detailResult.beta, decimals),
+                fiftyTwoWeekLow: getRawValText(detailResult.fiftyTwoWeekLow, decimals),
+                fiftyTwoWeekHigh: getRawValText(detailResult.fiftyTwoWeekHigh, decimals),
+                fiftyDayAverage: getRawValText(detailResult.fiftyDayAverage, decimals),
+                twoHundredDayAverage: getRawValText(detailResult.twoHundredDayAverage, decimals),
             },
             dividend: {
-                rate: getRawVal(detailResult.dividendRate),
-                yield: getRawVal(detailResult.dividendYield),
+                rate: getRawValText(detailResult.dividendRate, decimals),
+                yield: detailResult.dividendYield ? (detailResult.dividendYield.raw * 100).toFixed(2) : null,
                 exDate: detailResult.exDividendDate ? detailResult.exDividendDate.fmt : null,
-                trailingAnnualRate: getRawVal(detailResult.trailingAnnualDividendRate),
-                trailingAnnualYield: getRawVal(detailResult.trailingAnnualDividendYield),
+                trailingAnnualRate: getRawValText(detailResult.trailingAnnualDividendRate, decimals),
+                trailingAnnualYield: detailResult.trailingAnnualDividendYield ? (detailResult.trailingAnnualDividendYield.raw * 100).toFixed(2) : null,
             },
         };
 

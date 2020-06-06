@@ -81,15 +81,15 @@ PlasmaComponents.ListItem {
             spacing: -1
 
             PlasmaComponents3.Label {
-                text: `${currentPrice.toFixed(2)} ${currency}`
+                text: `${currentPrice} ${currency}`
                 Layout.alignment: Qt.AlignRight
             }
 
             PlasmaComponents3.Label {
                 Layout.alignment: Qt.AlignRight
 
-                text: `${priceChange.toFixed(2)} (${priceChangePercentage.toFixed(2)}%)`
-                color: priceChange == 0 ? theme.neutralTextColor : (priceChange > 0 ? theme.positiveTextColor : theme.negativeTextColor)
+                text: `${priceChange} (${priceChangePercentage}%)`
+                color: priceChange === 0 ? theme.neutralTextColor : (priceChange > 0 ? theme.positiveTextColor : theme.negativeTextColor)
                 clip: true
             }
         }
@@ -117,10 +117,10 @@ PlasmaComponents.ListItem {
 Type: ${instrument}
 Exchange: ${exchange}
 Market Cap: ${marketCap}
-Open: ${openPrice.toFixed(2)}
-Previous Close: ${previousClose.toFixed(2)}
-High: ${dayHighPrice.toFixed(2)}
-Low: ${dayLowPrice.toFixed(2)}
+Open: ${openPrice}
+Previous Close: ${previousClose}
+High: ${dayHighPrice}
+Low: ${dayLowPrice}
 Volume: ${volume}`
     }
 }

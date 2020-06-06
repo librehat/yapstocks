@@ -244,11 +244,11 @@ Item {
             twoHundredDayAverage.text = priceHistory.twoHundredDayAverage ? priceHistory.twoHundredDayAverage : "N/A";
             const dividendData = result.summaryDetail.dividend;
             if (dividendData.rate !== null) {
-                const yieldPercentage = dividendData.yield ? ` (${(dividendData.yield * 100).toFixed(2)}%)` : "";
+                const yieldPercentage = dividendData.yield ? ` (${dividendData.yield}%)` : "";
                 dividend.text = `${dividendData.rate}${yieldPercentage}`;
             }
             if (dividendData.trailingAnnualRate !== null) {
-                const yieldPercentage = dividendData.trailingAnnualYield ? ` (${(dividendData.trailingAnnualYield * 100).toFixed(2)}%)` : "";
+                const yieldPercentage = dividendData.trailingAnnualYield ? ` (${dividendData.trailingAnnualYield}%)` : "";
                 trailingDividend.text = `${dividendData.trailingAnnualRate}${yieldPercentage}`
             }
             exDividendDate.text = dividendData.exDate ? dividendData.exDate : "N/A";
