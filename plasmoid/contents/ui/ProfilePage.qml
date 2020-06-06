@@ -180,6 +180,8 @@ Item {
                 PlasmaExtras.Paragraph {
                     id: website
                     Layout.fillWidth: true
+                    linkColor: theme.textColor
+                    onLinkActivated: Qt.openUrlExternally(link)
                 }
                 PlasmaExtras.Heading {
                     Layout.fillWidth: true
@@ -242,11 +244,11 @@ Item {
             twoHundredDayAverage.text = priceHistory.twoHundredDayAverage ? priceHistory.twoHundredDayAverage : "N/A";
             const dividendData = result.summaryDetail.dividend;
             if (dividendData.rate !== null) {
-                const yieldPercentage = dividendData.yield ? ` (${(dividendData.yield * 100).toFixed(2)})` : "";
+                const yieldPercentage = dividendData.yield ? ` (${(dividendData.yield * 100).toFixed(2)}%)` : "";
                 dividend.text = `${dividendData.rate}${yieldPercentage}`;
             }
             if (dividendData.trailingAnnualRate !== null) {
-                const yieldPercentage = dividendData.trailingAnnualYield ? ` (${(dividendData.trailingAnnualYield * 100).toFixed(2)})` : "";
+                const yieldPercentage = dividendData.trailingAnnualYield ? ` (${(dividendData.trailingAnnualYield * 100).toFixed(2)}%)` : "";
                 trailingDividend.text = `${dividendData.trailingAnnualRate}${yieldPercentage}`
             }
             exDividendDate.text = dividendData.exDate ? dividendData.exDate : "N/A";
@@ -254,7 +256,9 @@ Item {
             const summaryProfile = result.summaryProfile;
             if (summaryProfile) {
                 address.text = summaryProfile.address;
-                website.text = summaryProfile.website;
+                if (summaryProfile.website) {
+                    website.text = `<a href='${summaryProfile.website}'>${summaryProfile.website}</a>`;
+                }
                 sector.text = summaryProfile.sector;
                 industry.text = summaryProfile.industry;
                 description.text = summaryProfile.description;
