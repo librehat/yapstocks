@@ -17,12 +17,11 @@
  *  along with YapStocks.  If not, see <https://www.gnu.org/licenses/>.
  */
 import QtQuick 2.12
-import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 import QtQml.Models 2.12
 import org.kde.plasma.plasmoid 2.0
-import org.kde.plasma.core 2.0 as PlasmaCore
-import org.kde.plasma.components 3.0 as PlasmaComponents
+import org.kde.plasma.components 2.0 as PlasmaComponents
+import org.kde.plasma.components 3.0 as PlasmaComponents3
 import org.kde.plasma.extras 2.0 as PlasmaExtras
 
 Item {
@@ -75,13 +74,13 @@ Item {
         }
     }
 
-    StackView {
+    PlasmaComponents.PageStack {
         id: stack
-        initialItem: mainView
+        initialPage: mainView
         anchors.fill: parent
     }
 
-    ScrollView {
+    PlasmaComponents3.ScrollView {
         id: mainView
         ListView {
             id: view
@@ -103,16 +102,16 @@ Item {
 
             footer: RowLayout {
                 width: parent.width
-                PlasmaComponents.Label {
+                PlasmaComponents3.Label {
                     Layout.fillWidth: true
                     font.pointSize: 8
                     font.underline: true
                     opacity: 0.7
-                    linkColor: PlasmaCore.ColorScope.textColor
+                    linkColor: theme.textColor
                     text: "<a href='https://finance.yahoo.com/'>Powered by Yahoo! Finance</a>"
                     onLinkActivated: Qt.openUrlExternally(link)
                 }
-                PlasmaComponents.Label {
+                PlasmaComponents3.Label {
                     Layout.alignment: Qt.AlignRight
                     font.pointSize: 8
                     visible: !!lastUpdated
@@ -128,7 +127,7 @@ Item {
         PriceChart { }
     }
 
-    PlasmaComponents.BusyIndicator {
+    PlasmaComponents3.BusyIndicator {
         anchors.centerIn: parent
         visible: loading
         running: loading

@@ -18,44 +18,55 @@
  */
 
 import QtQuick 2.12
-import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 import org.kde.plasma.core 2.0 as PlasmaCore
-import org.kde.plasma.components 3.0 as PlasmaComponents
+import org.kde.plasma.components 2.0 as PlasmaComponents
+import org.kde.plasma.components 3.0 as PlasmaComponents3
 import org.kde.kirigami 2.4 as Kirigami
 
 
-Item {
+PlasmaComponents.ListItem {
     signal pricesClicked()
     signal namesClicked()
 
-    height: contentRow.implicitHeight + separator.implicitHeight
+    height: contentRow.implicitHeight + separator.implicitHeight + 2 * units.smallSpacing
 
-    MenuSeparator {
+    Rectangle {
         id: separator
-        anchors.top: parent.top
-        width: parent.width
         visible: index !== 0
+        width: parent.width
+        height: 2
+        anchors.top: parent.top
+        border.width: 0
+        color: theme.viewBackgroundColor
     }
 
-    RowLayout { // TODO: Use GridLayout
+    RowLayout {
         id: contentRow
-        anchors.top: separator.bottom
-        width: parent.width
+        anchors {
+            top: separator.bottom
+            topMargin: units.smallSpacing
+            bottom: parent.bottom
+            bottomMargin: units.smallSpacing
+            left: parent.left
+            leftMargin: units.smallSpacing
+            right: parent.right
+            rightMargin: units.smallSpacing
+        }
 
         ColumnLayout {
             id: infoColumn
             Layout.fillWidth: true
             spacing: -1
 
-            PlasmaComponents.Label {
+            PlasmaComponents3.Label {
                 text: symbol
                 font.weight: Font.Black
                 Layout.fillWidth: true
                 Layout.alignment: Qt.AlignLeft
             }
 
-            PlasmaComponents.Label {
+            PlasmaComponents3.Label {
                 Layout.fillWidth: true
                 Layout.alignment: Qt.AlignLeft
 
@@ -69,24 +80,24 @@ Item {
             Layout.alignment: Qt.AlignRight
             spacing: -1
 
-            PlasmaComponents.Label {
+            PlasmaComponents3.Label {
                 text: `${currentPrice.toFixed(2)} ${currency}`
                 Layout.alignment: Qt.AlignRight
             }
 
-            PlasmaComponents.Label {
+            PlasmaComponents3.Label {
                 Layout.alignment: Qt.AlignRight
 
                 text: `${priceChange.toFixed(2)} (${priceChangePercentage.toFixed(2)}%)`
-                color: priceChange == 0 ? PlasmaCore.ColorScope.neutralTextColor : (priceChange > 0 ? PlasmaCore.ColorScope.positiveTextColor : PlasmaCore.ColorScope.negativeTextColor)
+                color: priceChange == 0 ? theme.neutralTextColor : (priceChange > 0 ? theme.positiveTextColor : theme.negativeTextColor)
                 clip: true
             }
         }
 
-        PlasmaComponents.Button {
+        PlasmaComponents3.ToolButton {
             icon.name: "office-chart-line"
-            onClicked: pricesClicked()
             visible: tooltip.containsMouse
+            onClicked: pricesClicked()
         }
     }
 

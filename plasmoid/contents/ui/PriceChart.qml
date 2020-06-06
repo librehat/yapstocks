@@ -17,11 +17,11 @@
  *  along with YapStocks.  If not, see <https://www.gnu.org/licenses/>.
  */
 import QtQuick 2.12
-import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 import QtCharts 2.2
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 3.0 as PlasmaComponents
+import org.kde.plasma.extras 2.0 as PlasmaExtras
 import org.kde.kirigami 2.4 as Kirigami
 
 Item {
@@ -34,10 +34,10 @@ Item {
         width: parent.width
         anchors.top: parent.top
 
-        PlasmaComponents.Label {
+        PlasmaExtras.Title {
             Layout.fillWidth: true
-            font.weight: Font.Black
             text: symbol
+            elide: Text.ElideRight
         }
 
         PlasmaComponents.Button {
@@ -94,17 +94,17 @@ Item {
                 min: new Date(2020, 1, 1)
                 max: new Date()
                 tickCount: 6
-                color: PlasmaCore.ColorScope.textColor
-                gridLineColor: PlasmaCore.ColorScope.textColor
-                labelsColor: PlasmaCore.ColorScope.textColor
+                color: theme.viewTextColor
+                gridLineColor: theme.viewTextColor
+                labelsColor: theme.viewTextColor
                 gridVisible: false
             },
             ValueAxis {
                 id: yAxis
                 tickCount: 8
-                color: PlasmaCore.ColorScope.textColor
-                gridLineColor: PlasmaCore.ColorScope.textColor
-                labelsColor: PlasmaCore.ColorScope.textColor
+                color: theme.viewTextColor
+                gridLineColor: theme.viewTextColor
+                labelsColor: theme.viewTextColor
             }
         ]
     }
@@ -116,7 +116,7 @@ Item {
         running: loading
     }
 
-    ToolTip { // TODO: try to use PlasmaComponents to make it visually consistent
+    PlasmaComponents.ToolTip {
         id: tooltip
         parent: chart
         delay: -1
@@ -134,8 +134,8 @@ Item {
             }
 
             const series = chart.createSeries(ChartView.SeriesTypeCandlestick, symbol, xAxis, yAxis);
-            series.increasingColor = PlasmaCore.ColorScope.positiveTextColor;
-            series.decreasingColor = PlasmaCore.ColorScope.negativeTextColor;
+            series.increasingColor = theme.positiveTextColor;
+            series.decreasingColor = theme.negativeTextColor;
             series.bodyWidth = 1.0;
             series.capsVisible = false;
             series.bodyOutlineVisible = false;
@@ -146,9 +146,10 @@ Item {
 Close: ${set.close.toFixed(2)}
 High: ${set.high.toFixed(2)}
 Low: ${set.low.toFixed(2)}
-Time: ${new Date(set.timestamp).toLocaleString()}`,
-                        Kirigami.Units.longDuration,
+Time: ${new Date(set.timestamp).toLocaleString()}`
                     );
+                } else {
+                    tooltip.hide();
                 }
             });
             const result = messageObject.data;
