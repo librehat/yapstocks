@@ -13,6 +13,10 @@
         <label>The interval in milliseconds to update the data shown.</label>
         <default>1800000</default>
     </entry>
+    <entry name="defaultPeriod" type="String">
+        <label>The default selected period for price chart view.</label>
+        <default>6M</default>
+    </entry>
   </group>
 
 </kcfg>

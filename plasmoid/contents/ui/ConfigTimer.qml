@@ -24,7 +24,11 @@ import org.kde.plasma.plasmoid 2.0
 
 Item {
     id: root
-    property int cfg_interval: plasmoid.configuration.updateInterval
+    signal configurationChanged
+
+    function saveConfig() {
+        plasmoid.configuration.updateInterval = updateIntervalSpin.value * 60000
+    }
 
     RowLayout {
         Label {
@@ -38,12 +42,8 @@ Item {
             editable: true
             textFromValue: (value) => i18np("%1 minute", "%1 minutes", value)
             valueFromText: (text) => parseInt(text, 10)
-
-            value: cfg_interval / 60000
-
-            onValueChanged: (value) => {
-                cfg_interval = value * 60000;
-            }
+            value: plasmoid.configuration.updateInterval / 60000
+            onValueChanged: configurationChanged()
         }
     }
 }

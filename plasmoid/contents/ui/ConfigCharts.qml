@@ -16,24 +16,32 @@
  *  You should have received a copy of the GNU General Public License
  *  along with YapStocks.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 import QtQuick 2.12
+import QtQuick.Controls 2.12
+import QtQuick.Layouts 1.12
+import org.kde.plasma.plasmoid 2.0
 
-import org.kde.plasma.configuration 2.0
+Item {
+    id: root
+    signal configurationChanged
 
-ConfigModel {
-    ConfigCategory {
-        name: i18n("Symbols")
-        icon: "format-text-symbol"
-        source: "ConfigSymbols.qml"
+    function saveConfig() {
+        plasmoid.configuration.defaultPeriod = periodCombo.currentText;
     }
-    ConfigCategory {
-        name: i18n("Charts")
-        icon: "office-chart-line"
-        source: "ConfigCharts.qml"
-    }
-    ConfigCategory {
-        name: i18n("Timer")
-        icon: "ktimer"
-        source: "ConfigTimer.qml"
+
+    RowLayout {
+        Label {
+            text: i18n("Default period:")
+        }
+
+        ComboBox {
+            id: periodCombo
+            model: ["1D", "5D", "1M", "6M", "YTD", "1Y", "5Y", "Max"]
+            onActivated: configurationChanged()
+            Component.onCompleted: {
+                currentIndex = find(plasmoid.configuration.defaultPeriod);
+            }
+        }
     }
 }
