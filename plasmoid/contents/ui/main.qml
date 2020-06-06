@@ -93,6 +93,9 @@ Item {
                 onPricesClicked: {
                     stack.push(chartComponent, {symbol, stack});
                 }
+                onNamesClicked: {
+                    stack.push(profileComponent, {symbol, stack});
+                }
             }
 
             header: PlasmaExtras.Title {
@@ -123,8 +126,13 @@ Item {
     }
 
     Component {
+        id: profileComponent
+        ProfilePage {}
+    }
+
+    Component {
         id: chartComponent
-        PriceChart { }
+        PriceChart {}
     }
 
     PlasmaComponents3.BusyIndicator {
