@@ -22,7 +22,6 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 import QtQml.Models 2.12
 import org.kde.plasma.plasmoid 2.0
-import org.kde.plasma.components 2.0 as PlasmaComponents
 import org.kde.kirigami 2.4 as Kirigami
 import "../code/yahoofinance.mjs" as YahooFinance
 
@@ -54,14 +53,14 @@ ColumnLayout {
         Layout.fillWidth: true
         spacing: Kirigami.Units.smallSpacing
 
-        PlasmaComponents.TextField {
+        TextField {
             id: symbolTextField
             Layout.fillWidth: true
 
             placeholderText: "Type Yahoo Finance symbol here"
         }
-        PlasmaComponents.Button {
-            iconSource: "list-add"
+        Button {
+            icon.name: "list-add"
             enabled: symbolTextField.text.trim().length > 0
             onClicked: {
                 inputRow.enabled = false;
@@ -119,8 +118,8 @@ ColumnLayout {
                     Layout.fillWidth: true
                     text: symbol
                 }
-                PlasmaComponents.Button {
-                    iconSource: "edit-delete"
+                Button {
+                    icon.name: "edit-delete"
                     onClicked: {
                         symbolsModel.remove(index);
                         handleSymbolsUpdate();
