@@ -86,8 +86,8 @@ PlasmaComponents.ListItem {
             PlasmaComponents3.Label {
                 Layout.alignment: Qt.AlignRight
 
-                text: `${priceChange} (${priceChangePercentage}%)`
-                color: priceChange === 0 ? theme.neutralTextColor : (priceChange > 0 ? theme.positiveTextColor : theme.negativeTextColor)
+                text: `${priceChange > 0 ? "+" + priceChange : priceChange} (${priceChangePercentage > 0 ? "+" + priceChangePercentage : priceChangePercentage}%)`
+                color: priceChange == 0 ? theme.neutralTextColor : (priceChange > 0 ? theme.positiveTextColor : theme.negativeTextColor)
                 clip: true
             }
         }

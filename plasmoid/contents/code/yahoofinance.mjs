@@ -27,9 +27,13 @@ import { httpRequestP } from "httprequest.mjs";
  */
 function getRawValText(val, decimals) {
     const result = val ? val.raw : null;
-    if (decimals !== null && result !== null) {
+    if (typeof result !== "number") {
+        return null;
+    }
+    if (typeof decimals === "number") {
         return result.toFixed(decimals);
     }
+    return result;
 }
 
 /**
