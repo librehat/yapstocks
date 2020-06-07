@@ -111,6 +111,7 @@ PlasmaComponents.ListItem {
         id: tooltip
         anchors.fill: parent
         mainText: `${shortName} (${symbol})`
+        // TODO: move this logic into `code`
         subText: `Long Name: ${longName}
 Type: ${instrument}
 Exchange: ${exchange}

@@ -180,6 +180,7 @@ Item {
                 PlasmaExtras.Paragraph {
                     id: website
                     Layout.fillWidth: true
+                    text: "N/A"
                     linkColor: theme.textColor
                     onLinkActivated: Qt.openUrlExternally(link)
                 }
@@ -259,9 +260,9 @@ Item {
                 if (summaryProfile.website) {
                     website.text = `<a href='${summaryProfile.website}'>${summaryProfile.website}</a>`;
                 }
-                sector.text = summaryProfile.sector;
-                industry.text = summaryProfile.industry;
-                description.text = summaryProfile.description;
+                sector.text = summaryProfile.sector ? summaryProfile.sector : "N/A";
+                industry.text = summaryProfile.industry ? summaryProfile.industry : "N/A";
+                description.text = summaryProfile.description ? summaryProfile.description : "N/A";
                 profileColumn.visible = true;
             }
 

@@ -28,7 +28,7 @@ import { httpRequestP } from "httprequest.mjs";
 function getRawValText(val, decimals) {
     const result = val ? val.raw : null;
     if (typeof result !== "number") {
-        return null;
+        return "N/A";
     }
     if (typeof decimals === "number") {
         return result.toFixed(decimals);
@@ -108,18 +108,18 @@ export function resolveQuote(symbol) {
             longName: priceResult.longName || priceResult.shortName,
             instrument: priceResult.quoteType,
             exchange: priceResult.exchange,
-            exchangeName: priceResult.exchangeName ? priceResult.exchangeName : null,
-            currentPrice: priceResult.regularMarketPrice ? priceResult.regularMarketPrice.raw.toFixed(decimals) : null,
-            dayHighPrice: priceResult.regularMarketDayHigh ? priceResult.regularMarketDayHigh.raw.toFixed(decimals) : null,
-            dayLowPrice: priceResult.regularMarketDayHigh ? priceResult.regularMarketDayLow.raw.toFixed(decimals) : null,
-            openPrice: priceResult.regularMarketOpen ? priceResult.regularMarketOpen.raw.toFixed(decimals) : null,
-            volume: priceResult.regularMarketVolume ? priceResult.regularMarketVolume.raw : null,
+            exchangeName: priceResult.exchangeName,
+            currentPrice: getRawValText(priceResult.regularMarketPrice, decimals),
+            dayHighPrice: getRawValText(priceResult.regularMarketDayHigh, decimals),
+            dayLowPrice: getRawValText(priceResult.regularMarketDayHigh, decimals),
+            openPrice: getRawValText(priceResult.regularMarketOpen, decimals),
+            volume: getRawValText(priceResult.regularMarketVolume),
             updatedDateTime: new Date(priceResult.regularMarketTime * 1000),
-            priceChange: priceResult.regularMarketChange ? priceResult.regularMarketChange.raw.toFixed(decimals) : null,
-            priceChangePercentage: priceResult.regularMarketChangePercent ? (priceResult.regularMarketChangePercent.raw * 100).toFixed(2) : null,
+            priceChange: getRawValText(priceResult.regularMarketChange, decimals),
+            priceChangePercentage: priceResult.regularMarketChangePercent ? (priceResult.regularMarketChangePercent.raw * 100).toFixed(2) : "N/A",
             priceDecimals: decimals,
-            previousClose: priceResult.regularMarketPreviousClose ? priceResult.regularMarketPreviousClose.raw.toFixed(decimals) : null,
-            marketCap: priceResult.marketCap ? priceResult.marketCap.raw : null,
+            previousClose: getRawValText(priceResult.regularMarketPreviousClose, decimals),
+            marketCap: getRawValText(priceResult.marketCap),
         };
     });
 }
@@ -174,9 +174,9 @@ export function resolveProfile(symbol) {
             components = result.components.components; // this could be null (e.g. ^SPX)
         } else { // summaryProfile for non-index only
             const profileResult = result.summaryProfile;
-            const address2 = profileResult.address2 ? profileResult.address2 + ", " : "";
+            const addresses = [profileResult.address1, profileResult.address2, profileResult.city, profileResult.zip, profileResult.country].filter(a => !!a);
             summaryProfile = {
-                address: `${profileResult.address1}, ${address2}${profileResult.city} ${profileResult.zip}, ${profileResult.country}`,
+                address: addresses.join(", "),
                 phone: profileResult.phone,
                 website: profileResult.website,
                 industry: profileResult.industry,
