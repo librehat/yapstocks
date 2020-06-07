@@ -49,9 +49,7 @@ PlasmaComponents.ListItem {
             bottom: parent.bottom
             bottomMargin: units.smallSpacing
             left: parent.left
-            leftMargin: units.smallSpacing
             right: parent.right
-            rightMargin: units.smallSpacing
         }
 
         ColumnLayout {
