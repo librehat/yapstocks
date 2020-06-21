@@ -242,13 +242,13 @@ Item {
     Component.onCompleted: {
         YahooFinance.resolveProfile(symbol).then((result) => {
             const localiseNumber = (num, isPrice) => {
-                if (num === null || num === undefined) {
+                if (typeof num === "string") {
                     return "N/A";
                 }
                 return Number(num).toLocaleString(locale, "f", isPrice ? result.summaryDetail.priceDecimals : 0);
             };
             const localisePercent = (num) => {
-                if (num === null || num === undefined) {
+                if (typeof num === "string") {
                     return "N/A";
                 }
                 return Number(num * 100).toLocaleString(locale, "f", 2) + locale.percent;

@@ -200,7 +200,7 @@ Time: ${new Date(set.timestamp).toLocaleString()}`
     }
 
     function localisePrice(num) {
-        if (num === null || num === undefined) {
+        if (typeof num === "string") {
             return "N/A";
         }
         return Number(num).toLocaleString(locale, "f", priceDecimals);

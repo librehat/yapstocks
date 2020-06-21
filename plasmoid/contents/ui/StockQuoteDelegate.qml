@@ -45,8 +45,8 @@ PlasmaComponents.ListItem {
     }
 
     function localiseNumber(num, isPrice, isChange) {
-        if (num === null || num === undefined) {
-            return "N/A";
+        if (typeof num === "string") {
+            return num;
         }
         let result = Number(num).toLocaleString(locale, "f", isPrice ? priceDecimals : 0);
         if (!isChange || num === 0) {

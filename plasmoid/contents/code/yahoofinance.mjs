@@ -25,7 +25,7 @@ import { httpRequestP } from "httprequest.mjs";
  * @return {Number|null}
  */
 function getRawVal(val) {
-    return val ? val.raw : null;
+    return (val && val.raw !== undefined) ? val.raw : "N/A";
 }
 
 /**
