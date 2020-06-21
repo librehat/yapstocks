@@ -72,10 +72,11 @@ PlasmaComponents.ListItem {
             spacing: -1
 
             PlasmaComponents3.Label {
-                text: symbol
-                font.weight: Font.Black
                 Layout.fillWidth: true
                 Layout.alignment: Qt.AlignLeft
+
+                text: symbol
+                font.weight: Font.Black
             }
 
             PlasmaComponents3.Label {
@@ -83,6 +84,9 @@ PlasmaComponents.ListItem {
                 Layout.alignment: Qt.AlignLeft
 
                 text: longName
+                // Sometimes it has HTML encoded characters
+                // StyledText will render them nicely (and more performant than RichText)
+                textFormat: Text.StyledText
                 elide: Text.ElideMiddle
             }
         }
