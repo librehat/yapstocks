@@ -16,6 +16,8 @@
  *  You should have received a copy of the GNU General Public License
  *  along with YapStocks.  If not, see <https://www.gnu.org/licenses/>.
  */
+
+import QtQml 2.12
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import org.kde.plasma.components 3.0 as PlasmaComponents
@@ -28,6 +30,8 @@ Item {
     property bool loading: true
     property Item stack
     property string symbol
+
+    readonly property var locale: Qt.locale()
 
     RowLayout {
         id: controlsRow
@@ -237,20 +241,31 @@ Item {
 
     Component.onCompleted: {
         YahooFinance.resolveProfile(symbol).then((result) => {
+            const localiseNumber = (num, isPrice, isChange) => {
+                if (num === null || num === undefined) {
+                    return "N/A";
+                }
+                let res = Number(num).toLocaleString(locale, "f", isPrice ? result.summaryDetail.priceDecimals : 0);
+                if (!isChange || num === 0) {
+                    return res;
+                }
+                return (num > 0 ? locale.positiveSign + res : res);
+            };
+
             const priceHistory = result.summaryDetail.priceHistory;
-            beta.text = priceHistory.beta ? priceHistory.beta : "N/A";
-            fiftyTwoWeekHigh.text = priceHistory.fiftyTwoWeekHigh ? priceHistory.fiftyTwoWeekHigh : "N/A";
-            fiftyTwoWeekLow.text = priceHistory.fiftyTwoWeekLow ? priceHistory.fiftyTwoWeekLow : "N/A";
-            fiftyDayAverage.text = priceHistory.fiftyDayAverage ? priceHistory.fiftyDayAverage : "N/A";
-            twoHundredDayAverage.text = priceHistory.twoHundredDayAverage ? priceHistory.twoHundredDayAverage : "N/A";
+            beta.text = localiseNumber(priceHistory.beta, true);
+            fiftyTwoWeekHigh.text = localiseNumber(priceHistory.fiftyTwoWeekHigh, true);
+            fiftyTwoWeekLow.text = localiseNumber(priceHistory.fiftyTwoWeekLow, true);
+            fiftyDayAverage.text = localiseNumber(priceHistory.fiftyDayAverage, true);
+            twoHundredDayAverage.text = localiseNumber(priceHistory.twoHundredDayAverage, true);
             const dividendData = result.summaryDetail.dividend;
             if (dividendData.rate !== null) {
-                const yieldPercentage = dividendData.yield ? ` (${dividendData.yield}%)` : "";
-                dividend.text = `${dividendData.rate}${yieldPercentage}`;
+                const yieldPercentage = dividendData.yield ? ` (${dividendData.yield}${locale.percent})` : "";
+                dividend.text = `${localiseNumber(dividendData.rate, true)}${yieldPercentage}`;
             }
             if (dividendData.trailingAnnualRate !== null) {
-                const yieldPercentage = dividendData.trailingAnnualYield ? ` (${dividendData.trailingAnnualYield}%)` : "";
-                trailingDividend.text = `${dividendData.trailingAnnualRate}${yieldPercentage}`
+                const yieldPercentage = dividendData.trailingAnnualYield ? ` (${dividendData.trailingAnnualYield}${locale.percent})` : "";
+                trailingDividend.text = `${localiseNumber(dividendData.trailingAnnualRate, true)}${yieldPercentage}`
             }
             exDividendDate.text = dividendData.exDate ? dividendData.exDate : "N/A";
 

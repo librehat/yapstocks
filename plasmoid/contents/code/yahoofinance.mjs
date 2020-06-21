@@ -22,18 +22,10 @@ import { httpRequestP } from "httprequest.mjs";
 /**
  * A wrapper to get the 'raw' value from Yahoo Finance's response
  * @param {Object|null} val
- * @param {Number|null} decimals
  * @return {Number|null}
  */
-function getRawValText(val, decimals) {
-    const result = val ? val.raw : null;
-    if (typeof result !== "number") {
-        return "N/A";
-    }
-    if (typeof decimals === "number") {
-        return result.toFixed(decimals);
-    }
-    return result;
+function getRawVal(val) {
+    return val ? val.raw : null;
 }
 
 /**
@@ -109,17 +101,17 @@ export function resolveQuote(symbol) {
             instrument: priceResult.quoteType,
             exchange: priceResult.exchange,
             exchangeName: priceResult.exchangeName,
-            currentPrice: getRawValText(priceResult.regularMarketPrice, decimals),
-            dayHighPrice: getRawValText(priceResult.regularMarketDayHigh, decimals),
-            dayLowPrice: getRawValText(priceResult.regularMarketDayHigh, decimals),
-            openPrice: getRawValText(priceResult.regularMarketOpen, decimals),
-            volume: getRawValText(priceResult.regularMarketVolume),
+            currentPrice: getRawVal(priceResult.regularMarketPrice),
+            dayHighPrice: getRawVal(priceResult.regularMarketDayHigh),
+            dayLowPrice: getRawVal(priceResult.regularMarketDayHigh),
+            openPrice: getRawVal(priceResult.regularMarketOpen),
+            volume: getRawVal(priceResult.regularMarketVolume),
             updatedDateTime: new Date(priceResult.regularMarketTime * 1000),
-            priceChange: getRawValText(priceResult.regularMarketChange, decimals),
+            priceChange: getRawVal(priceResult.regularMarketChange),
             priceChangePercentage: priceResult.regularMarketChangePercent ? (priceResult.regularMarketChangePercent.raw * 100).toFixed(2) : "N/A",
             priceDecimals: decimals,
-            previousClose: getRawValText(priceResult.regularMarketPreviousClose, decimals),
-            marketCap: getRawValText(priceResult.marketCap),
+            previousClose: getRawVal(priceResult.regularMarketPreviousClose),
+            marketCap: getRawVal(priceResult.marketCap),
         };
     });
 }
@@ -154,19 +146,20 @@ export function resolveProfile(symbol) {
         const summaryDetail = {
             currency: detailResult.currency,
             priceHistory: {
-                beta: getRawValText(detailResult.beta, decimals),
-                fiftyTwoWeekLow: getRawValText(detailResult.fiftyTwoWeekLow, decimals),
-                fiftyTwoWeekHigh: getRawValText(detailResult.fiftyTwoWeekHigh, decimals),
-                fiftyDayAverage: getRawValText(detailResult.fiftyDayAverage, decimals),
-                twoHundredDayAverage: getRawValText(detailResult.twoHundredDayAverage, decimals),
+                beta: getRawVal(detailResult.beta),
+                fiftyTwoWeekLow: getRawVal(detailResult.fiftyTwoWeekLow),
+                fiftyTwoWeekHigh: getRawVal(detailResult.fiftyTwoWeekHigh),
+                fiftyDayAverage: getRawVal(detailResult.fiftyDayAverage),
+                twoHundredDayAverage: getRawVal(detailResult.twoHundredDayAverage),
             },
             dividend: {
-                rate: getRawValText(detailResult.dividendRate, decimals),
+                rate: getRawVal(detailResult.dividendRate),
                 yield: detailResult.dividendYield ? (detailResult.dividendYield.raw * 100).toFixed(2) : null,
                 exDate: detailResult.exDividendDate ? detailResult.exDividendDate.fmt : null,
-                trailingAnnualRate: getRawValText(detailResult.trailingAnnualDividendRate, decimals),
+                trailingAnnualRate: getRawVal(detailResult.trailingAnnualDividendRate),
                 trailingAnnualYield: detailResult.trailingAnnualDividendYield ? (detailResult.trailingAnnualDividendYield.raw * 100).toFixed(2) : null,
             },
+            priceDecimals: decimals,
         };
 
         let summaryProfile = null, components = null;

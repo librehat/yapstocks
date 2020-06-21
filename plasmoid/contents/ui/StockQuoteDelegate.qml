@@ -17,6 +17,7 @@
  *  along with YapStocks.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import QtQml 2.12
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import org.kde.plasma.core 2.0 as PlasmaCore
@@ -31,6 +32,8 @@ PlasmaComponents.ListItem {
 
     height: contentRow.implicitHeight + separator.implicitHeight + 2 * units.smallSpacing
 
+    readonly property var locale: Qt.locale()
+
     Rectangle {
         id: separator
         visible: index !== 0
@@ -39,6 +42,17 @@ PlasmaComponents.ListItem {
         anchors.top: parent.top
         border.width: 0
         color: theme.viewBackgroundColor
+    }
+
+    function localiseNumber(num, isPrice, isChange) {
+        if (num === null || num === undefined) {
+            return "N/A";
+        }
+        let result = Number(num).toLocaleString(locale, "f", isPrice ? priceDecimals : 0);
+        if (!isChange || num === 0) {
+            return result;
+        }
+        return (num > 0 ? locale.positiveSign + result : result);
     }
 
     RowLayout {
@@ -79,15 +93,15 @@ PlasmaComponents.ListItem {
             spacing: -1
 
             PlasmaComponents3.Label {
-                text: `${currentPrice} ${currency}`
+                text: `${localiseNumber(currentPrice, true)} ${currency}`
                 Layout.alignment: Qt.AlignRight
             }
 
             PlasmaComponents3.Label {
                 Layout.alignment: Qt.AlignRight
 
-                text: `${priceChange > 0 ? "+" + priceChange : priceChange} (${priceChangePercentage > 0 ? "+" + priceChangePercentage : priceChangePercentage}%)`
-                color: priceChange == 0 ? theme.neutralTextColor : (priceChange > 0 ? theme.positiveTextColor : theme.negativeTextColor)
+                text: `${localiseNumber(priceChange, true, true)} (${priceChangePercentage > 0 ? "+" + priceChangePercentage : priceChangePercentage}${locale.percent})`
+                color: priceChange === 0 ? theme.neutralTextColor : (priceChange > 0 ? theme.positiveTextColor : theme.negativeTextColor)
                 clip: true
             }
         }
@@ -111,15 +125,14 @@ PlasmaComponents.ListItem {
         id: tooltip
         anchors.fill: parent
         mainText: `${shortName} (${symbol})`
-        // TODO: move this logic into `code`
         subText: `Long Name: ${longName}
 Type: ${instrument}
 Exchange: ${exchange}
-Market Cap: ${marketCap}
-Open: ${openPrice}
-Previous Close: ${previousClose}
-High: ${dayHighPrice}
-Low: ${dayLowPrice}
-Volume: ${volume}`
+Market Cap: ${localiseNumber(marketCap, false)}
+Open: ${localiseNumber(openPrice, true)}
+Previous Close: ${localiseNumber(previousClose, true)}
+High: ${localiseNumber(dayHighPrice, true)}
+Low: ${localiseNumber(dayLowPrice, true)}
+Volume: ${localiseNumber(volume, false)}`
     }
 }
