@@ -241,15 +241,20 @@ Item {
 
     Component.onCompleted: {
         YahooFinance.resolveProfile(symbol).then((result) => {
-            const localiseNumber = (num, isPrice, isChange) => {
+            const localiseNumber = (num, isPrice) => {
                 if (num === null || num === undefined) {
                     return "N/A";
                 }
-                let res = Number(num).toLocaleString(locale, "f", isPrice ? result.summaryDetail.priceDecimals : 0);
-                if (!isChange || num === 0) {
-                    return res;
+                return Number(num).toLocaleString(locale, "f", isPrice ? result.summaryDetail.priceDecimals : 0);
+            };
+            const localisePercent = (num) => {
+                if (num === null || num === undefined) {
+                    return "N/A";
                 }
-                return (num > 0 ? locale.positiveSign + res : res);
+                return Number(num * 100).toLocaleString(locale, "f", 2) + locale.percent;
+            };
+            const localiseISODate = (dateStr) => {
+                return dateStr ? Date.fromLocaleDateString(locale, dateStr, "yyyy-MM-dd").toLocaleDateString(locale) : "N/A";
             };
 
             const priceHistory = result.summaryDetail.priceHistory;
@@ -260,14 +265,14 @@ Item {
             twoHundredDayAverage.text = localiseNumber(priceHistory.twoHundredDayAverage, true);
             const dividendData = result.summaryDetail.dividend;
             if (dividendData.rate !== null) {
-                const yieldPercentage = dividendData.yield ? ` (${dividendData.yield}${locale.percent})` : "";
-                dividend.text = `${localiseNumber(dividendData.rate, true)}${yieldPercentage}`;
+                const yieldPercentage = localisePercent(dividendData.yield);
+                dividend.text = `${localiseNumber(dividendData.rate, true)} (${yieldPercentage})`;
             }
             if (dividendData.trailingAnnualRate !== null) {
-                const yieldPercentage = dividendData.trailingAnnualYield ? ` (${dividendData.trailingAnnualYield}${locale.percent})` : "";
-                trailingDividend.text = `${localiseNumber(dividendData.trailingAnnualRate, true)}${yieldPercentage}`
+                const yieldPercentage = localisePercent(dividendData.trailingAnnualYield);
+                trailingDividend.text = `${localiseNumber(dividendData.trailingAnnualRate, true)} (${yieldPercentage})`
             }
-            exDividendDate.text = dividendData.exDate ? dividendData.exDate : "N/A";
+            exDividendDate.text = localiseISODate(dividendData.exDate);
 
             const summaryProfile = result.summaryProfile;
             if (summaryProfile) {

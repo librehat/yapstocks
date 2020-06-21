@@ -55,7 +55,8 @@ export function resolveChart(symbol, range, interval) {
             currentPrice: meta.regularMarketPrice,
             previousClose: meta.previousClose,
             priceChange: meta.regularMarketPrice - meta.previousClose,
-            priceChangePercentage: ((meta.regularMarketPrice - meta.previousClose) / meta.previousClose * 100).toFixed(2),
+            priceChangePercentage: (meta.regularMarketPrice - meta.previousClose) / meta.previousClose,
+            priceDecimals: meta.priceHint === null ? 2 : meta.priceHint,
             updatedDateTime: new Date(meta.regularMarketTime * 1000),
             exchange: {
                 timezone: meta.timezone,
@@ -108,7 +109,7 @@ export function resolveQuote(symbol) {
             volume: getRawVal(priceResult.regularMarketVolume),
             updatedDateTime: new Date(priceResult.regularMarketTime * 1000),
             priceChange: getRawVal(priceResult.regularMarketChange),
-            priceChangePercentage: priceResult.regularMarketChangePercent ? (priceResult.regularMarketChangePercent.raw * 100).toFixed(2) : "N/A",
+            priceChangePercentage: getRawVal(priceResult.regularMarketChangePercent),
             priceDecimals: decimals,
             previousClose: getRawVal(priceResult.regularMarketPreviousClose),
             marketCap: getRawVal(priceResult.marketCap),
@@ -154,10 +155,10 @@ export function resolveProfile(symbol) {
             },
             dividend: {
                 rate: getRawVal(detailResult.dividendRate),
-                yield: detailResult.dividendYield ? (detailResult.dividendYield.raw * 100).toFixed(2) : null,
+                yield: getRawVal(detailResult.dividendYield),
                 exDate: detailResult.exDividendDate ? detailResult.exDividendDate.fmt : null,
                 trailingAnnualRate: getRawVal(detailResult.trailingAnnualDividendRate),
-                trailingAnnualYield: detailResult.trailingAnnualDividendYield ? (detailResult.trailingAnnualDividendYield.raw * 100).toFixed(2) : null,
+                trailingAnnualYield: getRawVal(detailResult.trailingAnnualDividendYield),
             },
             priceDecimals: decimals,
         };

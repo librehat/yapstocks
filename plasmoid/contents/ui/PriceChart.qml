@@ -16,6 +16,8 @@
  *  You should have received a copy of the GNU General Public License
  *  along with YapStocks.  If not, see <https://www.gnu.org/licenses/>.
  */
+
+import QtQml 2.12
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import QtCharts 2.2
@@ -27,6 +29,9 @@ Item {
     property bool loading: false
     property Item stack
     property string symbol
+    property int priceDecimals: 2
+
+    readonly property var locale: Qt.locale()
 
     RowLayout {
         id: controlsRow
@@ -143,11 +148,11 @@ Item {
             series.bodyOutlineVisible = false;
             series.hovered.connect((status, set) => {
                 if (status) {
-                    tooltip.show( // TODO: number format
-`Open: ${set.open.toFixed(2)}
-Close: ${set.close.toFixed(2)}
-High: ${set.high.toFixed(2)}
-Low: ${set.low.toFixed(2)}
+                    tooltip.show(
+`Open: ${localisePrice(set.open)}
+Close: ${localisePrice(set.close)}
+High: ${localisePrice(set.high)}
+Low: ${localisePrice(set.low)}
 Time: ${new Date(set.timestamp).toLocaleString()}`
                     );
                 } else {
@@ -155,6 +160,7 @@ Time: ${new Date(set.timestamp).toLocaleString()}`
                 }
             });
             const result = messageObject.data;
+            priceDecimals = result.priceDecimals;
             result.timeseries.forEach((data) => {
                 if (data.open === null || data.close === null || data.high === null || data.low === null) {
                     // Skip null data points
@@ -191,5 +197,12 @@ Time: ${new Date(set.timestamp).toLocaleString()}`
             periodCombo.currentIndex = periodCombo.find(plasmoid.configuration.defaultPeriod);
             updateAxes();
         }
+    }
+
+    function localisePrice(num) {
+        if (num === null || num === undefined) {
+            return "N/A";
+        }
+        return Number(num).toLocaleString(locale, "f", priceDecimals);
     }
 }

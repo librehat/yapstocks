@@ -100,7 +100,7 @@ PlasmaComponents.ListItem {
             PlasmaComponents3.Label {
                 Layout.alignment: Qt.AlignRight
 
-                text: `${localiseNumber(priceChange, true, true)} (${priceChangePercentage > 0 ? "+" + priceChangePercentage : priceChangePercentage}${locale.percent})`
+                text: `${localiseNumber(priceChange, true, true)} (${priceChangePercentage > 0 ? locale.positiveSign : ""}${Number(priceChangePercentage * 100).toLocaleString(locale, 'f', 2)}${locale.percent})`
                 color: priceChange === 0 ? theme.neutralTextColor : (priceChange > 0 ? theme.positiveTextColor : theme.negativeTextColor)
                 clip: true
             }
