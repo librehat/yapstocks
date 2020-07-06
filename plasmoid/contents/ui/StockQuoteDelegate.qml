@@ -30,19 +30,9 @@ PlasmaComponents.ListItem {
     signal pricesClicked()
     signal namesClicked()
 
-    height: contentRow.implicitHeight + separator.implicitHeight + 2 * units.smallSpacing
+    height: contentRow.implicitHeight + 2 * units.smallSpacing
 
     readonly property var locale: Qt.locale()
-
-    Rectangle {
-        id: separator
-        visible: index !== 0
-        width: parent.width
-        height: 2
-        anchors.top: parent.top
-        border.width: 0
-        color: theme.viewBackgroundColor
-    }
 
     function localiseNumber(num, isPrice, isChange) {
         if (typeof num === "string") {
@@ -57,14 +47,7 @@ PlasmaComponents.ListItem {
 
     RowLayout {
         id: contentRow
-        anchors {
-            top: separator.bottom
-            topMargin: units.smallSpacing
-            bottom: parent.bottom
-            bottomMargin: units.smallSpacing
-            left: parent.left
-            right: parent.right
-        }
+        anchors.fill: parent
 
         ColumnLayout {
             id: infoColumn
