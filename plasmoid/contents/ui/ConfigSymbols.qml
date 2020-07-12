@@ -22,6 +22,7 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 import QtQml.Models 2.12
 import org.kde.plasma.plasmoid 2.0
+import org.kde.plasma.components 2.0 as PlasmaComponents
 import org.kde.kirigami 2.4 as Kirigami
 import "../code/yahoofinance.mjs" as YahooFinance
 
@@ -96,24 +97,52 @@ ColumnLayout {
 
     function handleSymbolsUpdate() {
         const symbols = [];
-        for (let i = 0; i < symbolsModel.count; ++i) {
-            symbols.push(symbolsModel.get(i).symbol);
+        const items = symbolsVisualModel.items;
+        for (let i = 0; i < items.count; ++i) {
+            symbols.push(items.get(i).model.symbol);
         }
         cfg_symbols = symbols;
+        console.debug("symbols have been updated to", JSON.stringify(symbols));
     }
 
-    ScrollView {
-        Layout.fillWidth: true
-        Layout.fillHeight: true
-        ListView {
-            // TODO: support drag & drop to re-arrange the order
-            id: symbolsField
-            spacing: Kirigami.Units.smallSpacing
-            model: ListModel {
-                id: symbolsModel
-            }
-            delegate: RowLayout {
-                width: parent.width
+    DelegateModel {
+        id: symbolsVisualModel
+
+        model: ListModel { id: symbolsModel }
+        delegate: dragDelegate
+    }
+
+    Component {
+        id: dragDelegate
+        MouseArea {
+            id: dragArea
+            width: parent.width
+            height: contentRow.height
+
+            property bool held: false
+
+            hoverEnabled: true
+
+            drag.target: held ? contentRow : undefined
+            drag.axis: Drag.YAxis
+
+            onPressAndHold: held = true
+            onReleased: held = false
+
+            RowLayout {
+                id: contentRow
+                anchors {
+                    left: parent.left
+                    right: parent.right
+                    leftMargin: Kirigami.Units.smallSpacing
+                    rightMargin: Kirigami.Units.smallSpacing
+                }
+
+                Drag.active: dragArea.held
+                Drag.source: dragArea
+                Drag.hotSpot.x: width / 2
+                Drag.hotSpot.y: height / 2
+
                 Label {
                     Layout.fillWidth: true
                     text: symbol
@@ -126,6 +155,34 @@ ColumnLayout {
                     }
                 }
             }
+            DropArea {
+                anchors.fill: parent
+                anchors.margins: Kirigami.Units.smallSpacing
+                onEntered: {
+                    symbolsVisualModel.items.move(drag.source.DelegateModel.itemsIndex,
+                                                  dragArea.DelegateModel.itemsIndex);
+                    handleSymbolsUpdate();
+                }
+            }
+            PlasmaComponents.Highlight {
+                anchors {
+                    left: parent.left
+                    right: parent.right
+                    top: contentRow.top
+                    bottom: contentRow.bottom
+                }
+                visible: held
+            }
+        }
+    }
+
+    ScrollView {
+        Layout.fillWidth: true
+        Layout.fillHeight: true
+        ListView {
+            id: symbolsField
+            spacing: Kirigami.Units.smallSpacing
+            model: symbolsVisualModel
 
             Component.onCompleted: {
                 cfg_symbols.forEach((symbol) => symbolsModel.append({symbol}));
