@@ -54,6 +54,10 @@ PlasmaComponents.Page {
                 checked: true
                 icon.name: "office-chart-scatter"  // TODO: a better icon for candlesticks
                 onToggled: updateChartView()
+
+                PlasmaComponents.ToolTip {
+                    text: "Plot candlesticks chart"
+                }
             }
             PlasmaComponents.ToolButton {
                 id: lineChartBtn
@@ -61,6 +65,10 @@ PlasmaComponents.Page {
                 checkable: true
                 icon.name: "office-chart-line"
                 onToggled: updateChartView()
+
+                PlasmaComponents.ToolTip {
+                    text: "Plot line chart"
+                }
             }
         }
     }

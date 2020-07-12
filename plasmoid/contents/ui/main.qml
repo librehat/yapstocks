@@ -87,6 +87,10 @@ Item {
             visible: stack.depth > 1
             icon.name: "draw-arrow-back"
             onClicked: stack.pop()
+
+            PlasmaComponents3.ToolTip {
+                text: "Return to previous page"
+            }
         }
     }
     PlasmaComponents.PageStack {
