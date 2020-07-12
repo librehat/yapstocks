@@ -78,6 +78,25 @@ ColumnLayout {
         }
     }
 
+    RowLayout {
+        Layout.fillWidth: true
+        spacing: Kirigami.Units.smallSpacing
+
+        Label {
+            Layout.fillWidth: true
+        }
+
+        ToolButton {
+            icon.name: "view-sort-ascending-name"
+            onClicked: { sortSymbols(true) }
+        }
+
+        ToolButton {
+            icon.name: "view-sort-descending-name"
+            onClicked: { sortSymbols(false) }
+        }
+    }
+
     function validateSymbol(symbol) {
         return YahooFinance.resolveQuote(symbol).then(() => {
             for (let i = 0; i < symbolsModel.count; ++i) {
@@ -95,6 +114,29 @@ ColumnLayout {
         });
     }
 
+    function sortSymbols(ascending) {
+        const items = symbolsVisualModel.items;
+        const visuals = [];
+        for (let i = 0; i < items.count; ++i) {
+            visuals.push(items.get(i));
+        }
+        visuals.sort((a, b) => {
+            if (ascending) {
+                return a.model.symbol < b.model.symbol ? -1 : 1;
+            } else {
+                return a.model.symbol > b.model.symbol ? -1 : 1;
+            }
+        });
+        for (let i = 0; i < visuals.length; ++i) {
+            const item = visuals[i];
+            item.inVisual = true;
+            if (item.visualIndex !== i) {
+                visualItems.move(item.visualIndex, i);
+            }
+        }
+        handleSymbolsUpdate();
+    }
+
     function handleSymbolsUpdate() {
         const symbols = [];
         const items = symbolsVisualModel.items;
@@ -110,6 +152,11 @@ ColumnLayout {
 
         model: ListModel { id: symbolsModel }
         delegate: dragDelegate
+        groups: DelegateModelGroup {
+            id: visualItems
+            name: "visual"
+            includeByDefault: true  // there is no filtering here, otherwise this should be false
+        }
     }
 
     Component {
