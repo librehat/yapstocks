@@ -74,54 +74,72 @@ Item {
         }
     }
 
+    RowLayout {
+        id: headerRow
+        width: parent.width
+        height: title.implicitHeight
+        PlasmaExtras.Title {
+            id: title
+            Layout.fillWidth: true
+            text: stack.currentPage.title
+        }
+        PlasmaComponents3.ToolButton {
+            visible: stack.depth > 1
+            icon.name: "draw-arrow-back"
+            onClicked: stack.pop()
+        }
+    }
     PlasmaComponents.PageStack {
         id: stack
         initialPage: mainView
-        anchors.fill: parent
+        anchors {
+            top: headerRow.bottom
+            left: parent.left
+            right: parent.right
+            bottom: parent.bottom
+            topMargin: units.smallSpacing
+        }
     }
 
-    PlasmaComponents3.ScrollView {
+    PlasmaComponents3.Page {
         id: mainView
-        ListView {
-            id: view
+        title: "Stocks"
 
-            model:  ListModel {
-                id: symbolsModel
-            }
-            delegate: StockQuoteDelegate {
-                width: parent.width
-                onPricesClicked: {
-                    stack.push(chartComponent, {symbol, stack});
-                }
-                onNamesClicked: {
-                    stack.push(profileComponent, {symbol, stack});
-                }
-            }
+        PlasmaComponents3.ScrollView {
+            anchors.fill: parent
+            ListView {
+                id: view
 
-            header: PlasmaExtras.Title {
-                text: "Stocks"
-            }
-            headerPositioning: ListView.OverlayHeader
-
-            footer: RowLayout {
-                width: parent.width
-                PlasmaComponents3.Label {
-                    Layout.fillWidth: true
-                    font.pointSize: 8
-                    font.underline: true
-                    opacity: 0.7
-                    linkColor: theme.textColor
-                    text: "<a href='https://finance.yahoo.com/'>Powered by Yahoo! Finance</a>"
-                    onLinkActivated: Qt.openUrlExternally(link)
+                model:  ListModel {
+                    id: symbolsModel
                 }
-                PlasmaComponents3.Label {
-                    Layout.alignment: Qt.AlignRight
-                    font.pointSize: 8
-                    visible: !!lastUpdated
-                    text: "Last Updated: " + lastUpdated
+                delegate: StockQuoteDelegate {
+                    width: parent.width
+                    onPricesClicked: {
+                        stack.push(chartComponent, {symbol, stack});
+                    }
+                    onNamesClicked: {
+                        stack.push(profileComponent, {symbol, stack});
+                    }
                 }
             }
-            footerPositioning: ListView.OverlayFooter
+        }
+        footer: RowLayout {
+            PlasmaComponents3.Label {
+                Layout.fillWidth: true
+                font.pointSize: 8
+                font.underline: true
+                opacity: 0.7
+                linkColor: theme.textColor
+                text: "<a href='https://finance.yahoo.com/'>Powered by Yahoo! Finance</a>"
+                onLinkActivated: Qt.openUrlExternally(link)
+            }
+            PlasmaComponents3.Label {
+                Layout.alignment: Qt.AlignRight
+                font.pointSize: 8
+                visible: !!lastUpdated
+                text: "Last Updated: " + lastUpdated
+            }
         }
     }
 

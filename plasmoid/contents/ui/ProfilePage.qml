@@ -24,32 +24,12 @@ import org.kde.plasma.components 3.0 as PlasmaComponents
 import org.kde.plasma.extras 2.0 as PlasmaExtras
 import "../code/yahoofinance.mjs" as YahooFinance
 
-Item {
+PlasmaComponents.Page {
     id: root
 
     property bool loading: true
     property Item stack
-    property string symbol
-
-    readonly property var locale: Qt.locale()
-
-    RowLayout {
-        id: controlsRow
-        width: parent.width
-        anchors.top: root.top
-
-        PlasmaExtras.Title {
-            Layout.fillWidth: true
-            text: symbol
-            elide: Text.ElideRight
-        }
-
-        PlasmaComponents.Button {
-            icon.name: "draw-arrow-back"
-            text: "Return"
-            onClicked: stack.pop()
-        }
-    }
+    property alias symbol: root.title
 
     PlasmaComponents.BusyIndicator {
         anchors.centerIn: parent
@@ -59,9 +39,7 @@ Item {
 
     PlasmaComponents.ScrollView {
         id: view
-        anchors.top: controlsRow.bottom
-        anchors.bottom: root.bottom
-        width: root.width
+        anchors.fill: parent
         visible: !loading
         clip: true
 
@@ -71,7 +49,7 @@ Item {
         ColumnLayout {
             id: contentColumn
             // TODO: `parent.width` gives incorrect result :( try to fix this
-            width: height > (root.height - controlsRow.height) ? root.width - units.gridUnit * 1.5 : root.width
+            width: height > root.height ? root.width - units.gridUnit * 1.5 : root.width
 
             PlasmaExtras.Heading {
                 Layout.fillWidth: true

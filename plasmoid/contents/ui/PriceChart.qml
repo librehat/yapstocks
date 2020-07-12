@@ -23,40 +23,24 @@ import QtQuick.Layouts 1.12
 import QtCharts 2.2
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 3.0 as PlasmaComponents
-import org.kde.plasma.extras 2.0 as PlasmaExtras
 
-Item {
+PlasmaComponents.Page {
+    id: root
+
     property bool loading: false
-    property Item stack
-    property string symbol
+    property alias symbol: root.title
     property int priceDecimals: 2
 
-    readonly property var locale: Qt.locale()
-
-    RowLayout {
-        id: controlsRow
-        width: parent.width
-        anchors.top: parent.top
-
-        PlasmaExtras.Title {
-            Layout.fillWidth: true
-            text: symbol
-            elide: Text.ElideRight
-        }
-
-        PlasmaComponents.Button {
-            icon.name: "draw-arrow-back"
-            text: "Return"
-            onClicked: stack.pop()
-        }
-
-        PlasmaComponents.ComboBox {
-            id: periodCombo
-            model: ["1D", "5D", "1M", "6M", "YTD", "1Y", "5Y", "Max"]
-            onActivated: {
-                loading = true;
-                worker.sendMessage({action: "chart", symbol: symbol, period: periodCombo.currentText}); // TODO: i18n
-                updateAxes();
+    header: PlasmaComponents.ToolBar {
+        RowLayout {
+            PlasmaComponents.ComboBox {
+                id: periodCombo
+                model: ["1D", "5D", "1M", "6M", "YTD", "1Y", "5Y", "Max"]
+                onActivated: {
+                    loading = true;
+                    worker.sendMessage({action: "chart", symbol: symbol, period: periodCombo.currentText}); // TODO: i18n
+                    updateAxes();
+                }
             }
         }
     }
@@ -84,9 +68,7 @@ Item {
 
     ChartView {
         id: chart
-        width: parent.width
-        anchors.top: controlsRow.bottom
-        anchors.bottom: parent.bottom
+        anchors.fill: parent
 
         localizeNumbers: true
         legend.visible: false
