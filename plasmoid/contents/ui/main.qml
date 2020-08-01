@@ -105,9 +105,9 @@ Item {
         }
     }
 
-    PlasmaComponents3.Page {
+    PlasmaComponents.Page {  // Ubuntu 20.04 doesn't have PlasmaComponents3.Page
         id: mainView
-        title: "Stocks"
+        readonly property string title: "Stocks"
 
         PlasmaComponents3.ScrollView {
             anchors.fill: parent
@@ -126,23 +126,24 @@ Item {
                         stack.push(profileComponent, {symbol, stack});
                     }
                 }
-            }
-        }
-        footer: RowLayout {
-            PlasmaComponents3.Label {
-                Layout.fillWidth: true
-                font.pointSize: 8
-                font.underline: true
-                opacity: 0.7
-                linkColor: theme.textColor
-                text: "<a href='https://finance.yahoo.com/'>Powered by Yahoo! Finance</a>"
-                onLinkActivated: Qt.openUrlExternally(link)
-            }
-            PlasmaComponents3.Label {
-                Layout.alignment: Qt.AlignRight
-                font.pointSize: 8
-                visible: !!lastUpdated
-                text: "Last Updated: " + lastUpdated
+
+                footer: RowLayout {
+                    PlasmaComponents3.Label {
+                        Layout.fillWidth: true
+                        font.pointSize: 8
+                        font.underline: true
+                        opacity: 0.7
+                        linkColor: theme.textColor
+                        text: "<a href='https://finance.yahoo.com/'>Powered by Yahoo! Finance</a>"
+                        onLinkActivated: Qt.openUrlExternally(link)
+                    }
+                    PlasmaComponents3.Label {
+                        Layout.alignment: Qt.AlignRight
+                        font.pointSize: 8
+                        visible: !!lastUpdated
+                        text: "Last Updated: " + lastUpdated
+                    }
+                }
             }
         }
     }

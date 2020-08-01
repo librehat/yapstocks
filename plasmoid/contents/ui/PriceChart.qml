@@ -22,20 +22,31 @@ import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import QtCharts 2.2
 import org.kde.plasma.core 2.0 as PlasmaCore
-import org.kde.plasma.components 3.0 as PlasmaComponents
+import org.kde.plasma.components 2.0 as PlasmaComponents
+import org.kde.plasma.components 3.0 as PlasmaComponents3
 
 PlasmaComponents.Page {
     id: root
 
     property bool loading: false
-    property alias symbol: root.title
+    property string symbol: ""
+    property alias title: root.symbol
     property int priceDecimals: 2
     property var chartData: ({})
 
-    header: PlasmaComponents.ToolBar {
+    readonly property var locale: Qt.locale()
+
+    PlasmaComponents3.ToolBar {
+        id: toolbar
+        anchors {
+            top: parent.top
+            left: parent.left
+            right: parent.right
+        }
+
         RowLayout {
             width: parent.width
-            PlasmaComponents.ComboBox {
+            PlasmaComponents3.ComboBox {
                 id: periodCombo
                 model: ["1D", "5D", "1M", "6M", "YTD", "1Y", "5Y", "Max"]
                 onActivated: {
@@ -44,10 +55,10 @@ PlasmaComponents.Page {
                     updateAxes();
                 }
             }
-            PlasmaComponents.Label {  // used as an expander
+            PlasmaComponents3.Label {  // used as an expander
                 Layout.fillWidth: true
             }
-            PlasmaComponents.ToolButton {
+            PlasmaComponents3.ToolButton {
                 id: candlesticksChartBtn
                 autoExclusive: true
                 checkable: true
@@ -55,18 +66,18 @@ PlasmaComponents.Page {
                 icon.name: "office-chart-scatter"  // TODO: a better icon for candlesticks
                 onToggled: updateChartView()
 
-                PlasmaComponents.ToolTip {
+                PlasmaComponents3.ToolTip {
                     text: "Plot candlesticks chart"
                 }
             }
-            PlasmaComponents.ToolButton {
+            PlasmaComponents3.ToolButton {
                 id: lineChartBtn
                 autoExclusive: true
                 checkable: true
                 icon.name: "office-chart-line"
                 onToggled: updateChartView()
 
-                PlasmaComponents.ToolTip {
+                PlasmaComponents3.ToolTip {
                     text: "Plot line chart"
                 }
             }
@@ -96,7 +107,12 @@ PlasmaComponents.Page {
 
     ChartView {
         id: chart
-        anchors.fill: parent
+        anchors {
+            left: parent.left
+            right: parent.right
+            top: toolbar.bottom
+            bottom: parent.bottom
+        }
 
         localizeNumbers: true
         legend.visible: false
@@ -127,13 +143,13 @@ PlasmaComponents.Page {
         ]
     }
 
-    PlasmaComponents.BusyIndicator {
+    PlasmaComponents3.BusyIndicator {
         anchors.centerIn: parent
         visible: loading
         running: loading
     }
 
-    PlasmaComponents.ToolTip {
+    PlasmaComponents3.ToolTip {
         id: tooltip
         parent: chart
         delay: -1

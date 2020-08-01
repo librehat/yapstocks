@@ -20,7 +20,8 @@
 import QtQml 2.12
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
-import org.kde.plasma.components 3.0 as PlasmaComponents
+import org.kde.plasma.components 2.0 as PlasmaComponents
+import org.kde.plasma.components 3.0 as PlasmaComponents3
 import org.kde.plasma.extras 2.0 as PlasmaExtras
 import "../code/yahoofinance.mjs" as YahooFinance
 
@@ -29,15 +30,18 @@ PlasmaComponents.Page {
 
     property bool loading: true
     property Item stack
-    property alias symbol: root.title
+    property string symbol: ""
+    property alias title: root.symbol
 
-    PlasmaComponents.BusyIndicator {
+    readonly property var locale: Qt.locale()
+
+    PlasmaComponents3.BusyIndicator {
         anchors.centerIn: parent
         visible: loading
         running: loading
     }
 
-    PlasmaComponents.ScrollView {
+    PlasmaComponents3.ScrollView {
         id: view
         anchors.fill: parent
         visible: !loading
@@ -57,51 +61,51 @@ PlasmaComponents.Page {
             }
             RowLayout {
                 Layout.fillWidth: true
-                PlasmaComponents.Label {
+                PlasmaComponents3.Label {
                     Layout.fillWidth: true
                     text: "Beta"
                 }
-                PlasmaComponents.Label {
+                PlasmaComponents3.Label {
                     id: beta
                 }
             }
             RowLayout {
                 Layout.fillWidth: true
-                PlasmaComponents.Label {
+                PlasmaComponents3.Label {
                     Layout.fillWidth: true
                     text: "52-Week High"
                 }
-                PlasmaComponents.Label {
+                PlasmaComponents3.Label {
                     id: fiftyTwoWeekHigh
                 }
             }
             RowLayout {
                 Layout.fillWidth: true
-                PlasmaComponents.Label {
+                PlasmaComponents3.Label {
                     Layout.fillWidth: true
                     text: "52-Week Low"
                 }
-                PlasmaComponents.Label {
+                PlasmaComponents3.Label {
                     id: fiftyTwoWeekLow
                 }
             }
             RowLayout {
                 Layout.fillWidth: true
-                PlasmaComponents.Label {
+                PlasmaComponents3.Label {
                     Layout.fillWidth: true
                     text: "50-Day Moving Average"
                 }
-                PlasmaComponents.Label {
+                PlasmaComponents3.Label {
                     id: fiftyDayAverage
                 }
             }
             RowLayout {
                 Layout.fillWidth: true
-                PlasmaComponents.Label {
+                PlasmaComponents3.Label {
                     Layout.fillWidth: true
                     text: "200-Day Moving Average"
                 }
-                PlasmaComponents.Label {
+                PlasmaComponents3.Label {
                     id: twoHundredDayAverage
                 }
             }
@@ -111,33 +115,33 @@ PlasmaComponents.Page {
             }
             RowLayout {
                 Layout.fillWidth: true
-                PlasmaComponents.Label {
+                PlasmaComponents3.Label {
                     Layout.fillWidth: true
                     text: "Forward Annual Dividend"
                 }
-                PlasmaComponents.Label {
+                PlasmaComponents3.Label {
                     id: dividend
                     text: "N/A"
                 }
             }
             RowLayout {
                 Layout.fillWidth: true
-                PlasmaComponents.Label {
+                PlasmaComponents3.Label {
                     Layout.fillWidth: true
                     text: "Trailing Annual Dividend"
                 }
-                PlasmaComponents.Label {
+                PlasmaComponents3.Label {
                     id: trailingDividend
                     text: "N/A"
                 }
             }
             RowLayout {
                 Layout.fillWidth: true
-                PlasmaComponents.Label {
+                PlasmaComponents3.Label {
                     Layout.fillWidth: true
                     text: "Ex-Dividend Date"
                 }
-                PlasmaComponents.Label {
+                PlasmaComponents3.Label {
                     id: exDividendDate
                 }
             }
@@ -171,20 +175,20 @@ PlasmaComponents.Page {
                     text: "Classification"
                 }
                 RowLayout {
-                    PlasmaComponents.Label {
+                    PlasmaComponents3.Label {
                         Layout.fillWidth: true
                         text: "Sector"
                     }
-                    PlasmaComponents.Label {
+                    PlasmaComponents3.Label {
                         id: sector
                     }
                 }
                 RowLayout {
-                    PlasmaComponents.Label {
+                    PlasmaComponents3.Label {
                         Layout.fillWidth: true
                         text: "Industry"
                     }
-                    PlasmaComponents.Label {
+                    PlasmaComponents3.Label {
                         id: industry
                     }
                 }
