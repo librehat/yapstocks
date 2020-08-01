@@ -50,10 +50,11 @@ PlasmaComponents.Page {
         contentWidth: contentColumn.width
         contentHeight: contentColumn.height
 
+        readonly property real effectiveWidth: contentHeight > height ? width - PlasmaComponents3.ScrollBar.vertical.width - units.smallSpacing : width
+
         ColumnLayout {
             id: contentColumn
-            // TODO: `parent.width` gives incorrect result :( try to fix this
-            width: height > root.height ? root.width - units.gridUnit * 1.5 : root.width
+            width: view.effectiveWidth
 
             PlasmaExtras.Heading {
                 Layout.fillWidth: true
