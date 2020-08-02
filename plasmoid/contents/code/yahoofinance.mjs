@@ -118,6 +118,41 @@ export function resolveQuote(symbol) {
 }
 
 /**
+ * Gets basic information about multiple symbols
+ * @param {String[]} symbols
+ */
+export function resolveMultipleQuotes(symbols) {
+    return httpRequestP(`https://query2.finance.yahoo.com/v7/finance/quote?symbols=${symbols.join(",")}&fields=symbol,longName,shortName,exchange,quoteType,regularMarketPrice,regularMarketTime,regularMarketChange,regularMarketVolume,regularMarketDayRange,regularMarketOpen,regularMarketChangePercent,marketCap`)
+    .then((text) => {
+        const resp = JSON.parse(text);
+        if (resp.quoteResponse.error) {
+            console.log(`Error while resolving ${symbols.join(",")}:`, JSON.stringify(resp.quoteResponse.error));
+            throw new Error(resp.quoteResponse.error.description);
+        }
+        return resp.quoteResponse.result.map((result) => ({
+            symbol: result.symbol,
+            currency: result.currency || "",
+            shortName: result.shortName || "N/A",
+            longName: result.longName || result.shortName,
+            instrument: result.quoteType || "N/A",
+            exchange: result.exchange || "N/A",
+            exchangeName: result.fullExchangeName || "N/A",
+            currentPrice: result.regularMarketPrice || "N/A",
+            dayHighPrice: result.regularMarketDayHigh || "N/A",
+            dayLowPrice: result.regularMarketDayHigh || "N/A",
+            openPrice: result.regularMarketOpen || "N/A",
+            volume: result.regularMarketVolume || "N/A",
+            updatedDateTime: new Date(result.regularMarketTime * 1000),
+            priceChange: result.regularMarketChange || "N/A",
+            priceChangePercentage: result.regularMarketChangePercent || "N/A",
+            priceDecimals: result.priceHint || 2,
+            previousClose: result.regularMarketPreviousClose || "N/A",
+            marketCap: result.marketCap || "N/A"
+        }));
+    });
+}
+
+/**
  * Resolves a security symbol from Yahoo Finance and gets its profile
  * @param {String} symbol
  * @return {Promise}

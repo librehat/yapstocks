@@ -17,7 +17,7 @@
  *  along with YapStocks.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { resolveChart, resolveQuote } from "yahoofinance.mjs"
+import { resolveChart, resolveMultipleQuotes } from "yahoofinance.mjs"
 
 /**
  * Provides a map to map from our UI "period" to Yahoo's range and interval
@@ -76,21 +76,21 @@ WorkerScript.onMessage = (msg) => {
     return Promise.resolve().then(() => {
         if (msg.action === "modify") {
             msg.model.clear();
-            return Promise.all(msg.symbols.map(resolveQuote)).then((results) => {
+            return resolveMultipleQuotes(msg.symbols).then((results) => {
                 results.forEach((result) => msg.model.append(result));
                 msg.model.sync();
                 WorkerScript.sendMessage({ action: msg.action });
             });
         }
         if (msg.action === "refresh") {
-            const promises = [];
             const symbolIndexMap = new Map();
+            const symbols = [];
             for (let i = 0; i < msg.model.count; ++i) {
                 const symbol = msg.model.get(i).symbol;
-                promises.push(resolveQuote(symbol));
+                symbols.push(symbol);
                 symbolIndexMap.set(symbol, i);
             }
-            return Promise.all(promises).then((results) => {
+            return resolveMultipleQuotes(symbols).then((results) => {
                 results.forEach((result) => {
                     msg.model.set(symbolIndexMap.get(result.symbol), result);
                 });
