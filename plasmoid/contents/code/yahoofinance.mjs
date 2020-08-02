@@ -187,3 +187,38 @@ export function resolveProfile(symbol) {
         };
     });
 }
+
+/**
+ * Searches for financial symbols by a keyword
+ * @param {String} keyword
+ * @param {Number} maxCount
+ *
+ * The resolved result promise is an array of objects in the format shown below:
+ * {
+ *   "symbol": {String},
+ *   "shortName": {String},
+ *   "longName": {String},
+ *   "instrument": {String},
+ *   "exchange": {String},
+ * }
+ *
+ * Only the quotes that have 'isYahooFinance' as 'true' will be returned.
+ */
+export function searchQuotes(keyword, maxCount = 6) {
+    return httpRequestP(`https://query2.finance.yahoo.com/v1/finance/search?q=${keyword}&quotesCount=${maxCount}&newsCount=0`)
+    .then((text) => {
+        const resp = JSON.parse(text);
+        if (!resp.quotes) {
+            console.log(`Unknown error while searching ${keyword}`, text);
+            throw new Error("Unknown error");
+        }
+        return resp.quotes.filter((quote) => quote.isYahooFinance)
+        .map((quote) => ({
+            "symbol": quote.symbol,
+            "shortName": quote.shortname,
+            "longName": quote.longname || quote.shortname,
+            "instrument": quote.typeDisp,
+            "exchange": quote.exchange
+        }));
+    });
+}
