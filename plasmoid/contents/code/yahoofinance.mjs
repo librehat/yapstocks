@@ -122,6 +122,9 @@ export function resolveQuote(symbol) {
  * @param {String[]} symbols
  */
 export function resolveMultipleQuotes(symbols) {
+    if (symbols.length === 0) {
+        return Promise.resolve([]);
+    }
     return httpRequestP(`https://query2.finance.yahoo.com/v7/finance/quote?symbols=${symbols.join(",")}&fields=symbol,longName,shortName,exchange,quoteType,regularMarketPrice,regularMarketTime,regularMarketChange,regularMarketVolume,regularMarketDayRange,regularMarketOpen,regularMarketChangePercent,marketCap`)
     .then((text) => {
         const resp = JSON.parse(text);
@@ -161,7 +164,7 @@ export function resolveMultipleQuotes(symbols) {
  * {
  *   "summaryProfile": {Object|null},
  *   "summaryDetail": {Object|null},
- *   "components": {String[]|null},
+ *   "components": {Object[]|null},  // results from `resolveMultipleQuotes`
  * }
  * `null` is used to indicate that such information is not available for the symbol.
  */

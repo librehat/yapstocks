@@ -33,6 +33,8 @@ PlasmaComponents.Page {
     property string symbol: ""
     property alias title: root.symbol
 
+    property var components: ([])
+
     readonly property var locale: Qt.locale()
 
     PlasmaComponents3.BusyIndicator {
@@ -204,19 +206,16 @@ PlasmaComponents.Page {
             }
 
             ColumnLayout {
-                id: componentsColumn
-                visible: false
+                visible: root.components.length > 0
                 Layout.fillWidth: true
                 Layout.fillHeight: true
 
                 PlasmaExtras.Heading {
-                    Layout.fillWidth: true
                     text: "Components"
                 }
-                // TODO: v3: "main interface" (recursively nested) for components symbols
-                PlasmaExtras.Paragraph {
-                    id: componentsText
-                    Layout.fillWidth: true
+                ComponentsList {
+                    Layout.fillHeight: true
+                    symbols: root.components
                 }
             }
         }
@@ -268,12 +267,7 @@ PlasmaComponents.Page {
                 description.text = summaryProfile.description ? summaryProfile.description : "N/A";
                 profileColumn.visible = true;
             }
-
-            const components = result.components;
-            if (components && components.length) {
-                componentsText.text = components.join("\n");
-                componentsColumn.visible = true;
-            }
+            root.components = result.components || [];
         }).catch((error) => {
             // TODO
         }).then(() => {
