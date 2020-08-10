@@ -84,6 +84,18 @@ Item {
             text: stack.currentPage.title
         }
         PlasmaComponents3.ToolButton {
+            visible: stack.depth === 1
+            icon.name: "view-refresh"
+            onClicked: {
+                timer.restart();
+                root.refresh();
+            }
+
+            PlasmaComponents3.ToolTip {
+                text: "Refresh the data"
+            }
+        }
+        PlasmaComponents3.ToolButton {
             visible: stack.depth > 1
             icon.name: "draw-arrow-back"
             onClicked: stack.pop()
