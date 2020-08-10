@@ -130,7 +130,8 @@ Item {
                 footer: RowLayout {
                     PlasmaComponents3.Label {
                         Layout.fillWidth: true
-                        font.pointSize: 8
+                        font.pointSize: theme.smallestFont.pointSize
+                        font.weight: Font.Thin
                         font.underline: true
                         opacity: 0.7
                         linkColor: theme.textColor
@@ -139,7 +140,8 @@ Item {
                     }
                     PlasmaComponents3.Label {
                         Layout.alignment: Qt.AlignRight
-                        font.pointSize: 8
+                        font.pointSize: theme.smallestFont.pointSize
+                        font.weight: Font.Thin
                         visible: !!lastUpdated
                         text: "Last Updated: " + lastUpdated
                     }
