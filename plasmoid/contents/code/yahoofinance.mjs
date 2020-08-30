@@ -55,7 +55,7 @@ export function resolveChart(symbol, range, interval) {
             currentPrice: meta.regularMarketPrice,
             previousClose: meta.previousClose,
             priceChange: meta.regularMarketPrice - meta.previousClose,
-            priceChangePercentage: (meta.regularMarketPrice - meta.previousClose) / meta.previousClose,
+            priceChangePercentage: (meta.regularMarketPrice - meta.previousClose) / meta.previousClose * 100,
             priceDecimals: meta.priceHint === null ? 2 : meta.priceHint,
             updatedDateTime: new Date(meta.regularMarketTime * 1000),
             exchange: {
