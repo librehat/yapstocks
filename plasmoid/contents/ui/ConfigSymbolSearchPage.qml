@@ -22,7 +22,7 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 import QtQml.Models 2.12
 import org.kde.plasma.components 2.0 as PlasmaComponents
-import org.kde.kirigami 2.4 as Kirigami
+import org.kde.kirigami 2.12 as Kirigami
 import "../code/yahoofinance.mjs" as YahooFinance
 
 Page {
