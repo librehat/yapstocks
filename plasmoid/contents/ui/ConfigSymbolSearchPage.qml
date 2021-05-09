@@ -22,7 +22,7 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 import QtQml.Models 2.12
 import org.kde.plasma.components 2.0 as PlasmaComponents
-import org.kde.kirigami 2.12 as Kirigami
+import org.kde.kirigami 2.5 as Kirigami
 import "../code/yahoofinance.mjs" as YahooFinance
 
 Page {
@@ -72,8 +72,7 @@ Page {
                 spacing: Kirigami.Units.smallSpacing
                 model: ListModel { id: searchQuotesModel }
                 delegate: Kirigami.BasicListItem {
-                    label: symbol
-                    subtitle: `${longName} (${exchange}) (${instrument})`
+                    label: `${symbol}: ${longName} (${exchange}) (${instrument})`
 
                     onClicked: {
                         if (symbols.indexOf(symbol) !== -1) {
