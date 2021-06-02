@@ -8,6 +8,6 @@ Recommended way to install this is via [KDE Store](https://store.kde.org/p/13886
 ## Requirements
 
  - KDE Plasma >= 5.18
- - KDE Frameworks `kirigami2` >= 5.70
+ - KDE Frameworks `kirigami2` >= 5.67
  - Qt >= 5.12
  - QtCharts installed
