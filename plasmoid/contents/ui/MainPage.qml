@@ -32,7 +32,7 @@ PlasmaComponents.Page {
     readonly property string title: "Stocks"
     readonly property var locale: Qt.locale()
 
-    readonly property var symbols: ["IUKD.L"]// plasmoid.configuration.symbols
+    readonly property var symbols: plasmoid.configuration.symbols
     readonly property int updateInterval: plasmoid.configuration.updateInterval
 
     PlasmaComponents3.ScrollView {
