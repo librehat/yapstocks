@@ -84,7 +84,7 @@ export function resolveChart(symbol, range, interval) {
  * @return {Promise}
  */
 export function resolveQuote(symbol) {
-    return httpRequestP(`https://query1.finance.yahoo.com/v10/finance/quoteSummary/${symbol}?modules=price`)
+    return httpRequestP(`https://query1.finance.yahoo.com/v6/finance/quoteSummary/${symbol}?modules=price`)
     .then((text) => {
         const resp = JSON.parse(text);
         if (resp.quoteSummary.error) {
