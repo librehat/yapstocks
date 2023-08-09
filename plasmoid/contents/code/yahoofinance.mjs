@@ -173,8 +173,8 @@ export function resolveMultipleQuotes(symbols) {
  */
 export function resolveProfile(symbol) {
     const isIndex = symbol.startsWith("^");
-    const modules = isIndex ? "summaryDetail%2Ccomponents" : "summaryProfile%2CsummaryDetail";
-    return httpRequestP(`https://query1.finance.yahoo.com/v10/finance/quoteSummary/${symbol}?modules=${modules}`)
+    const additionalModules = isIndex ? "components" : "summaryProfile";
+    return httpRequestP(`https://query1.finance.yahoo.com/v6/finance/quoteSummary/${symbol}?modules=summaryDetail&modules=${additionalModules}`)
     .then((text) => {
         const resp = JSON.parse(text);
         if (resp.quoteSummary.error) {
