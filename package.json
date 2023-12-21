@@ -1,0 +1,23 @@
+{
+  "name": "nodejs-sandbox",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "author": "Gadi Cohen <dragon@wastelands.net>",
+  "license": "MIT",
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "dependencies": {
+    "colors": "^1.4.0",
+    "yahoo-finance": "^0.3.8",
+    "yahoo-finance2": "^2.9.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  }
+}

@@ -36,7 +36,8 @@ function getRawVal(val) {
  * @return {Promise}
  */
 export function resolveChart(symbol, range, interval) {
-    return httpRequestP(`https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?symbol=${symbol}&range=${range}&interval=${interval}`)
+    const URL = `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?symbol=${symbol}&range=${range}&interval=${interval}`;
+    return httpRequestP(URL)
     .then((text) => {
         const resp = JSON.parse(text);
         if (resp.chart.error) {
@@ -84,7 +85,8 @@ export function resolveChart(symbol, range, interval) {
  * @return {Promise}
  */
 export function resolveQuote(symbol) {
-    return httpRequestP(`https://query1.finance.yahoo.com/v6/finance/quoteSummary/${symbol}?modules=price`)
+    const URL = `https://query1.finance.yahoo.com/v6/finance/quoteSummary/${symbol}?modules=price`;
+    return httpRequestP(URL)
     .then((text) => {
         const resp = JSON.parse(text);
         if (resp.quoteSummary.error) {
@@ -126,7 +128,8 @@ export function resolveMultipleQuotes(symbols) {
         return Promise.resolve([]);
     }
     /** FIXME: no longer working
-    return httpRequestP(`https://query2.finance.yahoo.com/v6/finance/quote?symbols=${symbols.join(",")}&fields=symbol,longName,shortName,exchange,quoteType,regularMarketPrice,regularMarketTime,regularMarketChange,regularMarketVolume,regularMarketDayRange,regularMarketOpen,regularMarketChangePercent,marketCap`)
+    const URL = `https://query2.finance.yahoo.com/v6/finance/quote?symbols=${symbols.join(",")}&fields=symbol,longName,shortName,exchange,quoteType,regularMarketPrice,regularMarketTime,regularMarketChange,regularMarketVolume,regularMarketDayRange,regularMarketOpen,regularMarketChangePercent,marketCap`;
+    return httpRequestP(URL)
     .then((text) => {
         const resp = JSON.parse(text);
         if (resp.quoteResponse.error) {
@@ -174,7 +177,8 @@ export function resolveMultipleQuotes(symbols) {
 export function resolveProfile(symbol) {
     const isIndex = symbol.startsWith("^");
     const additionalModules = isIndex ? "components" : "summaryProfile";
-    return httpRequestP(`https://query1.finance.yahoo.com/v6/finance/quoteSummary/${symbol}?modules=summaryDetail&modules=${additionalModules}`)
+    const URL = `https://query1.finance.yahoo.com/v6/finance/quoteSummary/${symbol}?modules=summaryDetail&modules=${additionalModules}`;
+    return httpRequestP(URL)
     .then((text) => {
         const resp = JSON.parse(text);
         if (resp.quoteSummary.error) {
@@ -246,7 +250,8 @@ export function resolveProfile(symbol) {
  * Only the quotes that have 'isYahooFinance' as 'true' will be returned.
  */
 export function searchQuotes(keyword, maxCount = 6) {
-    return httpRequestP(`https://query2.finance.yahoo.com/v1/finance/search?q=${keyword}&quotesCount=${maxCount}&newsCount=0`)
+    const URL = `https://query2.finance.yahoo.com/v1/finance/search?q=${keyword}&quotesCount=${maxCount}&newsCount=0`;
+    return httpRequestP(URL)
     .then((text) => {
         const resp = JSON.parse(text);
         if (!resp.quotes) {
